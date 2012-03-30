@@ -14,9 +14,10 @@ function checkGameOver(){
 
 }
 
+
 function gameMove(){
 
-    var availablePlays = getAvailablePlays();
+    var availablePlays = getAvailablePlays(gameboard);
 
     if (availablePlays[this.id]){
         executeMove(this.id, gameboard);
@@ -33,6 +34,8 @@ function gameMove(){
 
 function getAvailablePlays(){
     return gameboard;
+    // working on this
+    
     //implement this!
 }
 
