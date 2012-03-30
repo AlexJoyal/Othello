@@ -1,0 +1,39 @@
+body {
+	font-family: sans-serif, "MS Trebuchet", Helvetica;
+	font-size: 15px;
+}
+
+h1 {
+	text-align: center;
+	margin: 20px;
+}
+
+div#board  {
+	position: absolute;
+	top: 10%;
+	right: 40%;
+}
+
+form {
+	margin: 10px
+}
+
+td {
+   background-color: #cbcbcb;
+   height: 50px;
+   width: 50px;
+}
+
+.player1 {
+   background: url(x2.png);
+
+}
+
+.player2 {
+   background: url(o.gif);
+}
+
+label {
+	padding: 20px;
+}
+
