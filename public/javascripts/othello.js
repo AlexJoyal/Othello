@@ -65,9 +65,7 @@ function setUpBoard(){
 }
 
 function executeMove(id, gameboard){
-    while (true){
-        if (gameboard[id])
-    }
+
 }
 
 
