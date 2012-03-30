@@ -15,16 +15,7 @@ function gameMove(){
 
 	if (availablePlays.contains(this.className)){
 		this.className = player.name;
-		//game.plays.add({player: this.id);
-		               
 		
-
-		//switch players turn
-		if (player == player1){
-		    player = player2;
-		} else {
-		    player = player1;
-		}
 	}
 }
 function setUpBoard(){
@@ -59,6 +50,9 @@ function setUpBoard(){
     for (var j = 81; j < 88; j++){
         gameboard[j] = document.getElementById( j.toString());
         gameboard[j].onclick = gameMove;
+    }
+    for (var j = 89; j < 100; j++){
+    	gameboard[j] = undefined;
     }
 }
 
