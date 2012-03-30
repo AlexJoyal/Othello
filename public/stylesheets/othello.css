@@ -25,12 +25,12 @@ td {
 }
 
 .player1 {
-   background: url(x2.png);
+   background-color: black;
 
 }
 
 .player2 {
-   background: url(o.gif);
+   background-color: white;
 }
 
 label {
