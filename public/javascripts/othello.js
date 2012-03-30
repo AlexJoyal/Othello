@@ -9,16 +9,16 @@ function checkGameOver(){
 
 }
 
-function gameMove(){
+function gameMove(gameboard){
 
-	availablePlays = gameBoard; //getAvailablePlays();
+	availablePlays = getAvailablePlays(gameboard);
 
 	if (availablePlays.contains(this.className)){
 		this.className = player.name;
 		
 	}
 }
-function setUpBoard(){
+function setUpBoard(gameboard){
     for (var j = 11; j < 18; j++){
         gameboard[j] = document.getElementById( j.toString());
         gameboard[j].onclick = gameMove;
@@ -58,8 +58,11 @@ function setUpBoard(){
 
 //initalize game and board
 function initializeGame(){
+	var player1 = "player1";
+	var player2 = "player2"
+	var player = player1;
 	var gameboard =  [];
-	setUpBoard();
+	setUpBoard(gameboard);
 
 }
 
