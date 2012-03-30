@@ -14,9 +14,16 @@ function gameMove(gameboard){
 	availablePlays = getAvailablePlays(gameboard);
 
 	if (availablePlays.contains(this.className)){
-		this.className = player.name;
+		this.className = player;
 		
+        //switch players turn
+        if (player == player1){
+            player = player2;
+        } else {
+            player = player1;
+        }
 	}
+
 }
 function setUpBoard(gameboard){
     for (var j = 11; j < 18; j++){
