@@ -37,18 +37,18 @@ function initializeGame(){
     
 
         for (var i = 11; i <= 88; i++) {     //iterates through board
-            console.log("1st loop");
+            //console.log("1st loop");
             if (gameboard[i] && gameboard[i].className == "") {   //empty //location is empty
-                console.log("1st if");
+                //console.log("1st if");
                 for (var j = 0; j <= 7; j++) {
-                    console.log("2nd loop");
+                    //console.log("2nd loop");
                     var n = 2;
                     if ((gameboard[ (i + locals[j]) ]) && (gameboard[ (i + locals[j]) ].className == 'p' + (-1*player).toString())) { //position adjacent to location is opp color
-                        console.log("2nd if");
-                        while (gameboard[ ( i + (n*locals[j]) ) ] && gameboard[ ( i + (n*locals[j]) ) ].classname == 'p' + (-1*player).toString()) {   //next square in line is opp color
-                            console.log("3rd loop");
+                        //console.log("2nd if");
+                        while (gameboard[ (i + (n*locals[j])) ] && gameboard[ ( i + (n*locals[j]) ) ].classname == 'p' + (-1*player).toString()) {   //next square in line is opp color
+                            //console.log("3rd loop");
                             if (gameboard[ ( i + ( (n+1)*locals[j]) ) ] && gameboard[ ( i + ( (n+1)*locals[j]) ) ].className == 'p' + player.toString()) { //next next square in is my color - viable move
-                                console.log("3rd if");
+                                //console.log("3rd if");
                                 moves[i] = i; //store it
                             } else {
                                 n++;
