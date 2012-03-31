@@ -24,16 +24,15 @@ td {
    width: 50px;
 }
 
-.player1 {
+.p1 {
    background-color: black;
 
 }
 
-.player2 {
+.p-1{
    background-color: white;
 }
 
 label {
 	padding: 20px;
 }
-
