@@ -64,15 +64,15 @@ function initializeGame(){
         for (var j = 0; j <= 7; j++) {
             var n = 1;
             if (gameboard[(move + locals[j])] && gameboard[ ( move + locals[j] ) ].className == ('p' + (-1*player))) { //position adjacent to location is opp color (avoids hopping over a blank space)
-                while (gameboard[ ( move + (n)*locals[j] ) ]) {
-                    if ((gameboard[ ( move + (n)*locals[j] ) ] ) && (gameboard[ ( move + (n)*locals[j] ) ] ).className == ('p' + player)) { //my piece at end of line - 
-                        for (var p = 1; p <= n; p++) { //starting at first not-my-piece until last not-my-piece
-                             //store locations between my pieces
-                             flips.push(move + p*locals[j]);
-                        }
-                    }
+                while (gameboard[ ( move + (n)*locals[j] ) ] && gameboard[ ( move + (n)*locals[j] ) ].className == ('p' + -1*player)) {
                     n++; //iterate down the line - stop when --color  
-                }            
+                }
+                if ((gameboard[ ( move + (n)*locals[j] ) ] ) && (gameboard[ ( move + (n)*locals[j] ) ] ).className == ('p' + player)) { //my piece at end of line - 
+                    for (var p = 1; p <= n; p++) { //starting at first not-my-piece until last not-my-piece
+                        //store locations between my pieces
+                        flips.push(move + p*locals[j]);
+                    }
+                }
             }   
         }
         return flips;
@@ -81,7 +81,7 @@ function initializeGame(){
 
     function setUpBoard(){
         var e;
-        for (var j = 11; j < 88; j++) {
+        for (var j = 11; j < 89; j++) {
             if ( (j%10 != 9) && (j%10 != 0) ) { 
                 gameboard[j] = document.getElementById( j.toString());
                 gameboard[j].onclick = gameMove;
@@ -91,7 +91,6 @@ function initializeGame(){
         for (var j = 89; j < 100; j++){
             gameboard[j] = undefined;
         }
-
         gameboard[44].className = "p1";
         gameboard[45].className = "p-1";
         gameboard[54].className = "p-1";
