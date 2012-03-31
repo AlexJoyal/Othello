@@ -43,7 +43,7 @@ function initializeGame(){
                 for (var j = 0; j <= 7; j++) {
                     //console.log("2nd loop");
                     var n = 2;
-                    if ((gameboard[ (i + locals[j]) ]) && (gameboard[ (i + locals[j]) ].className == 'p' + (-1*player).toString())) { //position adjacent to location is opp color
+                    if ((gameboard[ (i + locals[j]) ]) && (gameboard[ (i + locals[j]) ].className == ('p' + (-1*player).toString())) { //position adjacent to location is opp color
                         //console.log("2nd if");
                         while (gameboard[ (i + (n*locals[j])) ] && gameboard[ ( i + (n*locals[j]) ) ].classname == 'p' + (-1*player).toString()) {   //next square in line is opp color
                             //console.log("3rd loop");
