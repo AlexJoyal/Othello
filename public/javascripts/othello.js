@@ -17,7 +17,7 @@ function initializeGame(){
 
     function gameMove(){
 
-        var availablePlays = getAvailablePlays(gameboard);
+        
         console.log(availablePlays)
         if (availablePlays[this.id]){
             executeMove(this.id, gameboard, player);
@@ -25,23 +25,30 @@ function initializeGame(){
             //switch players turn
             player *= -1;
         }
+        availablePlays = getAvailablePlays();
 
     }
 
     function getAvailablePlays(){  // this returns a list of available moves - no flips unless we can map it
     
-        var locals = new Array(-11, -10, -9, -1, 1, 9, 10, 11);     //represents adjacent board locations
+        var locals = [-11, -10, -9, -1, 1, 9, 10, 11];     //represents adjacent board locations
     
         var moves = []; //storage for moves
     
 
         for (var i = 11; i <= 88; i++) {     //iterates through board
-            if (gameboard[i] == 0) {   //empty //location is empty
+            console.log("1st loop");
+            if (gameboard[i] && gameboard[i].className == "") {   //empty //location is empty
+                console.log("1st if");
                 for (var j = 0; j <= 7; j++) {
+                    console.log("2nd loop");
                     var n = 2;
-                    if (gameboard[ ( i + locals[j] ) ] == -1*player) { //position adjacent to location is opp color
-                        while (gameboard[ ( i + (n*locals[j]) ) ] == -1*player) {   //next square in line is opp color
-                            if (gameboard[ ( i + ( (n+1)*locals[j]) ) ] == player) { //next next square in is my color - viable move
+                    if ((gameboard[ (i + locals[j]) ]) && (gameboard[ (i + locals[j]) ].className == 'p' + (-1*player).toString())) { //position adjacent to location is opp color
+                        console.log("2nd if");
+                        while (gameboard[ ( i + (n*locals[j]) ) ] && gameboard[ ( i + (n*locals[j]) ) ].classname == 'p' + (-1*player).toString()) {   //next square in line is opp color
+                            console.log("3rd loop");
+                            if (gameboard[ ( i + ( (n+1)*locals[j]) ) ] && gameboard[ ( i + ( (n+1)*locals[j]) ) ].className == 'p' + player.toString()) { //next next square in is my color - viable move
+                                console.log("3rd if");
                                 moves[i] = i; //store it
                             } else {
                                 n++;
@@ -57,7 +64,7 @@ function initializeGame(){
     function getFlips(move) {   // accepts a move - returns flips for that move - useful for onMouseOver and onClick
  
         // move is the board location - an int
-        var locals = new Array(-11, -10, -9, -1, 1, 9, 10, 11);   //represents adjacent board locations
+        var locals = [-11, -10, -9, -1, 1, 9, 10, 11];   //represents adjacent board locations
         var flips = [];   //stores board locations that will be flipped
 
         for (var j = 0; j <= 7; j++) {
@@ -101,6 +108,7 @@ function initializeGame(){
 	var player = player1;
 	var gameboard =  [];
 	setUpBoard(gameboard);
+    var availablePlays = getAvailablePlays(gameboard);
 
 }
 
