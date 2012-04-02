@@ -17,13 +17,15 @@ function initializeGame(){
 
     function gameMove(){
 
-        
+        var ccNum = 0;
         //console.log(availablePlays)
         if (availablePlays[this.id]){
             executeMove(this.id, gameboard, player);
-            
+            ccNum = 0;
             //switch players turn
             player *= -1;
+        } else {
+            ccNum++;
         }
         availablePlays = getAvailablePlays();
 
