@@ -24,6 +24,10 @@ td {
    width: 50px;
 }
 
+.p0{
+	background-color: #cbcbcb;
+}
+
 .p1 {
    background-color: black;
 
@@ -31,6 +35,10 @@ td {
 
 .p-1{
    background-color: white;
+}
+
+.pMove{
+	background-color: moccasin;
 }
 
 label {
