@@ -135,7 +135,7 @@ function initializeGame(){
     }
 
     function IagoPlays(){
-        var bestMove = getMax(gameboard);
+        var bestMove = minimax.getMax(gameboard);
         if (bestMove === 0){
             console.log("Iago has no moves! Your turn")
             player *= -1;
@@ -213,93 +213,6 @@ function initializeGame(){
         return flips;
     }
 
-
-    //this accepts the gameboard and returns the new move when the +player makes the best decision 
-    //implicit assumption that the move flips pieces - generating a positive result - else the 
-    //  move would be invalid
-    function getMax(gb){  
-		var nMoves = [];
-		var nFlips = 0;
-		var maxFlips = 0;
-		var maxMove = 0;
-		
-		nMoves = getAvailablePlays(gb, player);
-		for (var n in nMoves) {
-			nFlips = getFlips(gb,n);
-            //console.log(nFlips);
-			if (nFlips.length > maxFlips) {
-				maxMove = n;
-                maxFlips = nFlips.length;
-			}
-		}
-		return maxMove;
-    }
-    
-    
-    //this accepts the gameboard and returns the new move when the -player makes the best decision 
-    //implicit assumption that the move flips pieces - generating a negative result - else the 
-    //  move would be invalid
-    function getMin(gb){  //this accepts the gameboard and returns the new move when the -player makes the best decision 
-		var nMoves = [];
-		var nFlips = 0;
-		var maxFlips = 0;
-		var minMove = 0;
-		
-		nMoves = getAvailablePlays(gb, player);
-		for (var n in nMoves) {
-			nFlips = getFlips(n);
-			if (nFlips.length < maxFlips) {
-				minMove = n;
-                maxFlips = nFlips.length;
-			}
-		}
-		return minMove;
-    }
-    
-
-   
-
-    //this is for Iago as the max player 
-    //run the root move from the calling function - this will allow comparison of best results for 
-    //  each root move - this means we'll need to virtually update the gb after the first move, 
-    //  and after any move called for here
-    //update all move functions to accept actual or virtual gameboard
-    function miniMax(gb,depth,player) {
-    	var nextMoves = [];
-    	nextMove = getAvailablePlays(gb, player); //need to add player (gb,player)
-    	var bestMove = 0;
-    	var newGB = [];
-    //assessment of max or min - may need to change this for a-b pruning    
-    //this simply extends the game tree down to the level for assessment 
-    //we only need to return the move to be made
-    	if (depth > 1) {
-    		if (depth%2==0) { //get min
-    			for (var n in nextMoves) {
-    				if (getMin(gb) < bestMove) {
-    					bestMove = getMin(gb);
-    				}
-    			}
-    		}
-    		else { //get max
-    			for (var n in nextMoves) {
-    				if (getMin(gb) > bestMove) {
-    					bestMove = getMax(gb);
-    				}
-    			}
-    		}
-    			
-    		newGB = virtualMove(gb,bestMove);
-    		depth--;					//next level
-    		player *= -1; 				//switch players
-    		miniMax(newGB,depth,player); //call minimax on next level
-		}
-        //at depth - need to getMax value for each possible move
-        //although we track the 
-		else { 	
-			return getMax(gb);
-    	}
-    }
-
     function replayMove(id, player, moves){
         counter++;
         if (counter >= moves.length){
@@ -312,6 +225,91 @@ function initializeGame(){
         setTimeout(function() {replayMove(moves[counter].id, moves[counter].player, moves);}, 1000);
     }
 
+    //this accepts the gameboard and returns the new move when the +player makes the best decision 
+    //implicit assumption that the move flips pieces - generating a positive result - else the 
+    //  move would be invalid
+    function getMax(gb){  
+        var nMoves = [];
+        var nFlips = 0;
+        var maxFlips = 0;
+        var maxMove = 0;
+        
+        nMoves = getAvailablePlays(gb, player);
+        for (var n in nMoves) {
+            nFlips = getFlips(gb,n);
+            //console.log(nFlips);
+            if (nFlips.length > maxFlips) {
+                maxMove = n;
+                maxFlips = nFlips.length;
+            }
+        }
+        return maxMove;
+    }
+    
+    
+    //this accepts the gameboard and returns the new move when the -player makes the best decision 
+    //implicit assumption that the move flips pieces - generating a negative result - else the 
+    //  move would be invalid
+    function getMin(gb){  //this accepts the gameboard and returns the new move when the -player makes the best decision 
+        var nMoves = [];
+        var nFlips = 0;
+        var maxFlips = 0;
+        var minMove = 0;
+        
+        nMoves = getAvailablePlays(gb, player);
+        for (var n in nMoves) {
+            nFlips = getFlips(n);
+            if (nFlips.length < maxFlips) {
+                minMove = n;
+                maxFlips = nFlips.length;
+            }
+        }
+        return minMove;
+    }
+    
+
+   
+
+    //this is for Iago as the max player 
+    //run the root move from the calling function - this will allow comparison of best results for 
+    //  each root move - this means we'll need to virtually update the gb after the first move, 
+    //  and after any move called for here
+    //update all move functions to accept actual or virtual gameboard
+    function miniMax(gb,depth,player) {
+        var nextMoves = [];
+        nextMove = getAvailablePlays(gb, player); //need to add player (gb,player)
+        var bestMove = 0;
+        var newGB = [];
+    //assessment of max or min - may need to change this for a-b pruning    
+    //this simply extends the game tree down to the level for assessment 
+    //we only need to return the move to be made
+        if (depth > 1) {
+            if (depth%2==0) { //get min
+                for (var n in nextMoves) {
+                    if (getMin(gb) < bestMove) {
+                        bestMove = getMin(gb);
+                    }
+                }
+            }
+            else { //get max
+                for (var n in nextMoves) {
+                    if (getMin(gb) > bestMove) {
+                        bestMove = getMax(gb);
+                    }
+                }
+            }
+                
+            newGB = virtualMove(gb,bestMove);
+            depth--;                    //next level
+            player *= -1;               //switch players
+            miniMax(newGB,depth,player); //call minimax on next level
+        }
+        //at depth - need to getMax value for each possible move
+        //although we track the 
+        else {  
+            return getMax(gb);
+        }
+    }
 
 
     var newGame = document.getElementById("NewGame");
