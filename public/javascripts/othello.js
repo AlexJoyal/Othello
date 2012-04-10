@@ -21,6 +21,15 @@ function initializeGame(){
 		return mm;    
     }
 
+    function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+
+    return true;
+}
+
     function setUpBoard(){
         var e;
         for (var j = 11; j < 89; j++) {
@@ -87,18 +96,17 @@ function initializeGame(){
     
     function gameMove(){
         availablePlays = getAvailablePlays(gameboard, player);
-        if (availablePlays.length === 0 && !gameover){
-                player *= -1;
-                IagoPlays();
-        } else if (availablePlays[this.id] && !gameover){
+        if (availablePlays[this.id] && !gameover){
             GAMEHISTORY.push({'id':this.id, 'player':player});
             executeMove(this.id, player);
             //console.log(player);
 			//Iago plays - 
             //this is functioning level 1 implementation - we may want to randomize when multiple best moves
 			IagoPlays();
+        } else if (isEmpty(availablePlays)){
+            player *= -1;
+            IagoPlays();
         }
-        
         checkGameOver(gameboard);
 
         //L2 - choose best move for two plays later assuming opponent is infallible
@@ -165,7 +173,7 @@ function initializeGame(){
     function getAvailablePlays(gb, player){  // this returns a list of available moves - no flips unless we can map it
     
         var locals = [-11, -10, -9, -1, 1, 9, 10, 11];     //represents adjacent board locations
-        var moves = []; //storage for moves
+        var moves = {}; //storage for moves
 
         for (var i = 11; i <= 88; i++) {     //iterates through board
             if (gb[i] && gb[i].className == "") {   //location is empty
