@@ -5,18 +5,145 @@
 //initalize game and board
 function initializeGame(){
 
-   
-//end state test - true when board is full
-    function allTilesFilled() {
-    	for (var i = 11; i <= 88; i++) {
-			if ( (i%10 != 9) && (i%10 != 0) ) { 
-                if (gameboard[i].className == ""){
-    				return false;
-	       		}
-	        }
+    // this returns the number of tiles p1 has as a function of p-1
+    function getStatus(gb) {   
+    	var mm = 0;
+    	for (var i = 11; i <= 88; i++) {   
+    		if (gb[i]) {
+    			if (gb[i].className == 'p1') {
+    		 		mm++;
+    		 	}
+    		 	else {
+    		 		mm--;
+    		 	}
+    		 }	
+		}
+		return mm;    
+    }
+
+    function setUpBoard(){
+        var e;
+        for (var j = 11; j < 89; j++) {
+            if ( (j%10 != 9) && (j%10 != 0) ) { 
+                gameboard[j] = document.getElementById(j.toString());
+                
+                gameboard[j].className = "";
+                gameboard[j].onclick = gameMove;
+                
+                //TODO implement onmouseover - shows results of click
+				//gameboard[j].onmouseover = showMove();
+            }
         }
-		return true;
-	}
+
+  	  		
+        gameboard[44].className = "p1";
+        gameboard[45].className = "p-1";
+        gameboard[54].className = "p-1";
+        gameboard[55].className = "p1";
+    }
+    
+    
+    function checkGameOver(gameboard){
+
+        //end state test - true when board is full
+        function allTilesFilled() {
+            for (var i = 11; i <= 88; i++) {
+                if ( (i%10 != 9) && (i%10 != 0) ) { 
+                    if (gameboard[i].className == ""){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        if (allTilesFilled()){
+            gameover = true;
+            GameOver();
+        } else if (getAvailablePlays(gameboard, player1) == "" && getAvailablePlays(gameboard, player2) == ""){
+            gameover = true;
+            GameOver();
+        }
+        
+    }
+    
+    
+    function GameOver(){
+        //increment games played
+        //increment winning players victory total
+        //store game board and history of moves
+        //
+        console.log("Game Over");
+        //gamesPlayed++;
+
+    }
+
+    //need to keep track of the board without updating it    
+    function virtualMove(gb,id) {
+		
+    	return gb;
+    }
+    
+    
+    function gameMove(){
+        availablePlays = getAvailablePlays(gameboard, player);
+        if (availablePlays.length === 0 && !gameover){
+                player *= -1;
+                IagoPlays();
+        } else if (availablePlays[this.id] && !gameover){
+            GAMEHISTORY.push({'id':this.id, 'player':player});
+            executeMove(this.id, player);
+            //console.log(player);
+			//Iago plays - 
+            //this is functioning level 1 implementation - we may want to randomize when multiple best moves
+			IagoPlays();
+        }
+        
+        checkGameOver(gameboard);
+
+        //L2 - choose best move for two plays later assuming opponent is infallible
+		// attempt 1 - just add + - and generate a number
+		//need to find max of min of max
+		/*
+        	var L1Moves = [];
+			L1Moves = getAvailablePlays(gameboard);
+			console.log("L1Moves.length is " + L1Moves.length);
+			var plus = 0;
+			var minus = 0;
+			for (var i = 0; i < L1Moves.length; i++){
+				plus = getFlips(gameboard,L1Moves[i]);
+				console.log("plus");
+			}
+        */
+        //end L2
+    }
+
+    // the if statement in here doesn't seem to be doing anything -- 
+    // it verifies that the id of the move is a valid board location
+    function executeMove(id, p){
+
+        if (!gameboard[id].className){
+            gameboard[id].className = 'p' + p.toString();
+            var flips = getFlips(gameboard, id, p);
+            for (var a in flips){
+                gameboard[flips[a]].className = 'p' + p.toString();
+                //console.log(player);
+            }
+        }
+        player *= -1;
+        getGameScore(gameboard);
+    }
+
+    function IagoPlays(){
+        var bestMove = getMax(gameboard);
+        if (bestMove === 0){
+            console.log("Iago has no moves! Your turn")
+            player *= -1;
+            return;
+        }
+        GAMEHISTORY.push({'id':bestMove, 'player':player});
+        setTimeout(function(){executeMove(bestMove, player);}, 1000);
+    }
 
     function getGameScore(gameboard){
         p1Score = 0;
@@ -35,25 +162,6 @@ function initializeGame(){
         p2Wins.innerHTML = p2Score;
     }
 
-// this returns the number of tiles p1 has as a function of p-1
-    function getStatus(gb) {   
-    	var mm = 0;
-    	for (var i = 11; i <= 88; i++) {   
-    		if (gb[i]) {
-    			if (gb[i].className == 'p1') {
-    		 		mm++;
-    		 	}
-    		 	else {
-    		 		mm--;
-    		 	}
-    		 }	
-		}
-		return mm;    
-    }
-
-
-
-
     function getAvailablePlays(gb, player){  // this returns a list of available moves - no flips unless we can map it
     
         var locals = [-11, -10, -9, -1, 1, 9, 10, 11];     //represents adjacent board locations
@@ -67,8 +175,8 @@ function initializeGame(){
                         while (gb[ (i + (n*locals[j])) ]) {   //next square in line is opp color
                             if (gb[ ( i + ( (n+1)*locals[j]) ) ] && gb[ ( i + ( (n+1)*locals[j]) ) ].className == 'p' + player) { //next next square in is my color - viable move
                                 moves[i] = i; //store it
-// next line shows move options
-        						//gameboard[i].className = "pMove";
+                                // next line shows move options
+                                //gameboard[i].className = "pMove";
                                 break;
                             }
                             n++;
@@ -81,7 +189,7 @@ function initializeGame(){
     }
 
 
-// this has been modified to accept either the actual gameboard or the virtual gameboard
+    // this has been modified to accept either the actual gameboard or the virtual gameboard
     function getFlips(gb, move) {   // accepts a move - returns flips for that move - useful for onMouseOver and onClick
  
         // move is the board location - an int
@@ -106,123 +214,6 @@ function initializeGame(){
     }
 
 
-    function setUpBoard(){
-        var e;
-        for (var j = 11; j < 89; j++) {
-            if ( (j%10 != 9) && (j%10 != 0) ) { 
-                gameboard[j] = document.getElementById(j.toString());
-                
-                gameboard[j].className = "";
-                gameboard[j].onclick = gameMove;
-                
-                //TODO implement onmouseover - shows results of click
-				//gameboard[j].onmouseover = showMove();
-            }
-        }
-
-  	  		
-        gameboard[44].className = "p1";
-        gameboard[45].className = "p-1";
-        gameboard[54].className = "p-1";
-        gameboard[55].className = "p1";
-    }
-    
-
-// the if statement in here doesn't seem to be doing anything
-    function executeMove(id, p){
-
-        if (!gameboard[id].className){
-            gameboard[id].className = 'p' + p.toString();
-            var flips = getFlips(gameboard, id, p);
-            for (var a in flips){
-                gameboard[flips[a]].className = 'p' + p.toString();
-                //console.log(player);
-            }
-        }
-        player *= -1;
-        getGameScore(gameboard);
-    }
-    
-    function checkGameOver(gameboard){
-        if (allTilesFilled()){
-            gameover = true;
-            GameOver();
-            console.log("you are fucked")
-        } else if (getAvailablePlays(gameboard, player1) == "" && getAvailablePlays(gameboard, player2) == ""){
-            gameover = true;
-            GameOver();
-            console.log("you are fucked")
-        }
-        
-    }
-    
-    
-    //need to keep track of the board without updating it    
-    function virtualMove(gb,id) {
-		
-    	return gb;
-    }
-    
-    
-    function IagoPlays(){
-        var bestMove = getMax(gameboard);
-        if (bestMove === 0){
-            console.log("Iago has no moves! Your turn")
-            player *= -1;
-            return;
-        }
-        GAMEHISTORY.push({'id':bestMove, 'player':player});
-        setTimeout(function(){executeMove(bestMove, player);}, 1000);
-    }
-    
-    function gameMove(){
-        availablePlays = getAvailablePlays(gameboard, player);
-        if (availablePlays.length === 0 && !gameover){
-                player *= -1;
-                IagoPlays();
-        } else if (availablePlays[this.id] && !gameover){
-            GAMEHISTORY.push({'id':this.id, 'player':player});
-            executeMove(this.id, player);
-            //console.log(player);
-			//Iago plays - 
-            //this is functioning level 1 implementation - we may want to randomize when multiple best moves
-			IagoPlays();
-        }
-        
-        checkGameOver(gameboard);
-
-            //console.log(player);
-//	
-/*  
-//
-//L2 - choose best move for two plays later assuming opponent is infallible
-		// attempt 1 - just add + - and generate a number
-			//need to find max of min of max
-			var L1Moves = [];
-			L1Moves = getAvailablePlays(gameboard);
-			console.log("L1Moves.length is " + L1Moves.length);
-			var plus = 0;
-			var minus = 0;
-			for (var i = 0; i < L1Moves.length; i++){
-				plus = getFlips(gameboard,L1Moves[i]);
-				console.log("plus");
-			}
-
-*/
-
-//end L2
-    }
-
-    function GameOver(){
-        //increment games played
-        //increment winning players victory total
-        //store game board and history of moves
-        //
-        console.log("Game Over");
-        //gamesPlayed++;
-
-    }
-    
     //this accepts the gameboard and returns the new move when the +player makes the best decision 
     //implicit assumption that the move flips pieces - generating a positive result - else the 
     //  move would be invalid
@@ -268,19 +259,19 @@ function initializeGame(){
 
    
 
-//this is for Iago as the max player 
-//run the root move from the calling function - this will allow comparison of best results for 
-//  each root move - this means we'll need to virtually update the gb after the first move, 
-//  and after any move called for here
-//update all move functions to accept actual or virtual gameboard
+    //this is for Iago as the max player 
+    //run the root move from the calling function - this will allow comparison of best results for 
+    //  each root move - this means we'll need to virtually update the gb after the first move, 
+    //  and after any move called for here
+    //update all move functions to accept actual or virtual gameboard
     function miniMax(gb,depth,player) {
     	var nextMoves = [];
     	nextMove = getAvailablePlays(gb, player); //need to add player (gb,player)
     	var bestMove = 0;
     	var newGB = [];
-//assessment of max or min - may need to change this for a-b pruning    
-//this simply extends the game tree down to the level for assessment 
-//we only need to return the move to be made
+    //assessment of max or min - may need to change this for a-b pruning    
+    //this simply extends the game tree down to the level for assessment 
+    //we only need to return the move to be made
     	if (depth > 1) {
     		if (depth%2==0) { //get min
     			for (var n in nextMoves) {
@@ -302,8 +293,8 @@ function initializeGame(){
     		player *= -1; 				//switch players
     		miniMax(newGB,depth,player); //call minimax on next level
 		}
-//at depth - need to getMax value for each possible move
-//although we track the 
+        //at depth - need to getMax value for each possible move
+        //although we track the 
 		else { 	
 			return getMax(gb);
     	}
@@ -317,7 +308,7 @@ function initializeGame(){
         } else {
             executeMove(id, player);
         }
-        console.log(counter);
+        //console.log(counter);
         setTimeout(function() {replayMove(moves[counter].id, moves[counter].player, moves);}, 1000);
     }
 
@@ -333,10 +324,10 @@ function initializeGame(){
 
     var playPrev = document.getElementById("PreviousGame");
     playPrev.onclick = function(){
+        counter = 0;
         gameboard = [];
         setUpBoard(gameboard);
         replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY);
-
     }
     var p1Wins = document.getElementById("player1wins");
     var p2Wins = document.getElementById("player2wins");
