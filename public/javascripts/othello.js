@@ -7,15 +7,33 @@ function initializeGame(){
 
    
 //end state test - true when board is full
-    function alltilesFilled() {
-    	for (var i = 11; i <= 88; i++) {   
-    	console.log(i);
-			if (!gameboard[i]) {
-				return false;
-			}
-	    }
+    function allTilesFilled() {
+    	for (var i = 11; i <= 88; i++) {
+			if ( (i%10 != 9) && (i%10 != 0) ) { 
+                if (gameboard[i].className == ""){
+    				return false;
+	       		}
+	        }
+        }
 		return true;
 	}
+
+    function getGameScore(gameboard){
+        p1Score = 0;
+        p2Score = 0;
+        for (var i = 11; i <= 88; i++) {
+            if ( (i%10 != 9) && (i%10 != 0) ) { 
+                if (gameboard[i].className == "p1"){
+                    p1Score++;
+                }
+                if (gameboard[i].className == "p-1"){
+                    p2Score++;
+                }
+            }
+        }
+        p1Wins.innerHTML = p1Score;
+        p2Wins.innerHTML = p2Score;
+    }
 
 // this returns the number of tiles p1 has as a function of p-1
     function getStatus(gb) {   
@@ -36,13 +54,13 @@ function initializeGame(){
 
 
 
-    function getAvailablePlays(gb){  // this returns a list of available moves - no flips unless we can map it
+    function getAvailablePlays(gb, player){  // this returns a list of available moves - no flips unless we can map it
     
         var locals = [-11, -10, -9, -1, 1, 9, 10, 11];     //represents adjacent board locations
         var moves = []; //storage for moves
 
         for (var i = 11; i <= 88; i++) {     //iterates through board
-            if (gb[i] && gb[i].className == "") {   //empty //location is empty
+            if (gb[i] && gb[i].className == "") {   //location is empty
                 for (var j = 0; j <= 7; j++) {
                     var n = 1;
                     if ((gb[ (i + locals[j]) ]) && (gb[ (i + locals[j]) ].className == ('p' + (-1*player)))) { //position adjacent to location is opp color
@@ -94,10 +112,11 @@ function initializeGame(){
             if ( (j%10 != 9) && (j%10 != 0) ) { 
                 gameboard[j] = document.getElementById(j.toString());
                 
-                //gameboard[j].className = "p0";
+                gameboard[j].className = "";
                 gameboard[j].onclick = gameMove;
-//TODO implement onmouseover - shows results of click
-//				gameboard[j].onmouseover = showMove();
+                
+                //TODO implement onmouseover - shows results of click
+				//gameboard[j].onmouseover = showMove();
             }
         }
 
@@ -110,16 +129,32 @@ function initializeGame(){
     
 
 // the if statement in here doesn't seem to be doing anything
-    function executeMove(id){
-        //if (!gameboard[id].className){
-            gameboard[id].className = 'p' + player.toString();
-            var flips = getFlips(gameboard, id);
+    function executeMove(id, p){
+
+        if (!gameboard[id].className){
+            gameboard[id].className = 'p' + p.toString();
+            var flips = getFlips(gameboard, id, p);
             for (var a in flips){
-                gameboard[flips[a]].className = 'p' + player.toString();
+                gameboard[flips[a]].className = 'p' + p.toString();
+                //console.log(player);
             }
-        //}
+        }
+        player *= -1;
+        getGameScore(gameboard);
     }
     
+    function checkGameOver(gameboard){
+        if (allTilesFilled()){
+            gameover = true;
+            GameOver();
+            console.log("you are fucked")
+        } else if (getAvailablePlays(gameboard, player1) == "" && getAvailablePlays(gameboard, player2) == ""){
+            gameover = true;
+            GameOver();
+            console.log("you are fucked")
+        }
+        
+    }
     
     
     //need to keep track of the board without updating it    
@@ -129,21 +164,34 @@ function initializeGame(){
     }
     
     
+    function IagoPlays(){
+        var bestMove = getMax(gameboard);
+        if (bestMove === 0){
+            console.log("Iago has no moves! Your turn")
+            player *= -1;
+            return;
+        }
+        GAMEHISTORY.push({'id':bestMove, 'player':player});
+        setTimeout(function(){executeMove(bestMove, player);}, 1000);
+    }
     
-    
-    function gameMove(){ 
-
-        if (availablePlays[this.id]){
-
-            //executeMove(this.id, gameboard, player);
-            executeMove(this.id);
-            //switch players turn
-            player *= -1;	
-            
+    function gameMove(){
+        availablePlays = getAvailablePlays(gameboard, player);
+        if (availablePlays.length === 0 && !gameover){
+                player *= -1;
+                IagoPlays();
+        } else if (availablePlays[this.id] && !gameover){
+            GAMEHISTORY.push({'id':this.id, 'player':player});
+            executeMove(this.id, player);
+            //console.log(player);
 			//Iago plays - 
-//this is functioning level 1 implementation - we may want to randomize when multiple best moves
-			var bestMove = getMax(gameboard);
-			executeMove(bestMove);
+            //this is functioning level 1 implementation - we may want to randomize when multiple best moves
+			IagoPlays();
+        }
+        
+        checkGameOver(gameboard);
+
+            //console.log(player);
 //	
 /*  
 //
@@ -162,12 +210,17 @@ function initializeGame(){
 
 */
 
-//endL2			
-			//switch players turn
-			player *= -1;
-        
-			availablePlays = getAvailablePlays(gameboard);
-        }
+//end L2
+    }
+
+    function GameOver(){
+        //increment games played
+        //increment winning players victory total
+        //store game board and history of moves
+        //
+        console.log("Game Over");
+        //gamesPlayed++;
+
     }
     
     //this accepts the gameboard and returns the new move when the +player makes the best decision 
@@ -179,11 +232,13 @@ function initializeGame(){
 		var maxFlips = 0;
 		var maxMove = 0;
 		
-		nMoves = getAvailablePlays(gameboard);
+		nMoves = getAvailablePlays(gb, player);
 		for (var n in nMoves) {
-			nFlips = getFlips(gameboard,n);
+			nFlips = getFlips(gb,n);
+            //console.log(nFlips);
 			if (nFlips.length > maxFlips) {
 				maxMove = n;
+                maxFlips = nFlips.length;
 			}
 		}
 		return maxMove;
@@ -199,11 +254,12 @@ function initializeGame(){
 		var maxFlips = 0;
 		var minMove = 0;
 		
-		nMoves = getAvailablePlays();
+		nMoves = getAvailablePlays(gb, player);
 		for (var n in nMoves) {
 			nFlips = getFlips(n);
 			if (nFlips.length < maxFlips) {
 				minMove = n;
+                maxFlips = nFlips.length;
 			}
 		}
 		return minMove;
@@ -219,7 +275,7 @@ function initializeGame(){
 //update all move functions to accept actual or virtual gameboard
     function miniMax(gb,depth,player) {
     	var nextMoves = [];
-    	nextMove = getAvailablePlays(gb); //need to add player (gb,player)
+    	nextMove = getAvailablePlays(gb, player); //need to add player (gb,player)
     	var bestMove = 0;
     	var newGB = [];
 //assessment of max or min - may need to change this for a-b pruning    
@@ -253,13 +309,53 @@ function initializeGame(){
     	}
     }
 
+    function replayMove(id, player, moves){
+        counter++;
+        if (counter >= moves.length){
+            executeMove(id, player);
+            return;
+        } else {
+            executeMove(id, player);
+        }
+        console.log(counter);
+        setTimeout(function() {replayMove(moves[counter].id, moves[counter].player, moves);}, 1000);
+    }
 
+
+
+    var newGame = document.getElementById("NewGame");
+    newGame.onclick = function(){
+        gameboard = [];
+        setUpBoard(gameboard);
+        player = player1;
+        GAMEHISTORY = [];
+    }
+
+    var playPrev = document.getElementById("PreviousGame");
+    playPrev.onclick = function(){
+        gameboard = [];
+        setUpBoard(gameboard);
+        replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY);
+
+    }
+    var p1Wins = document.getElementById("player1wins");
+    var p2Wins = document.getElementById("player2wins");
+
+    var counter = 0;
 	var player1 = 1;
 	var player2 = -1;
-	var player = player1;
+    var p1Score = 0;
+    var p2Score = 0;
+
+	p1Wins.innerHTML = p1Score;
+    p2Wins.innerHTML = p2Score;
+
+    var gameover = false;
+    var player = player1;
 	var gameboard =  [];
 	setUpBoard(gameboard);
-    var availablePlays = getAvailablePlays(gameboard);
+    var availablePlays = getAvailablePlays(gameboard, player);;
+    var GAMEHISTORY = [];
 
 }
 
