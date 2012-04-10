@@ -135,7 +135,7 @@ function initializeGame(){
     }
 
     function IagoPlays(){
-        var bestMove = minimax.getMax(gameboard);
+        var bestMove = getMax(gameboard);
         if (bestMove === 0){
             console.log("Iago has no moves! Your turn")
             player *= -1;
