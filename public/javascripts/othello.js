@@ -151,11 +151,7 @@ function initializeGame(){
     function IagoPlays(){
         /*var bestMove = getMax(gameboard);
         //console.log(bestMove);
-        if (bestMove === 0){
-            console.log("Iago has no moves! Your turn")
-            player *= -1;
-            return;
-        }*/
+        */
         //L2 - choose best move for two plays later assuming opponent is infallible
         // attempt 1 - just add + - and generate a number
         //need to find max of min of max
@@ -208,7 +204,12 @@ function initializeGame(){
         console.log("bestMove is " + bestMove + " " + player);
         //executeMove(gameboard,bestMove, player);
 
-        //endL2 
+        //endL2
+        if (bestMove === 0){
+            console.log("Iago has no moves! Your turn")
+            player *= -1;
+            return;
+        }
         GAMEHISTORY.push({'id':bestMove, 'player':player});
         setTimeout(function(){executeMove(gameboard, bestMove, player);}, 1000);
     }
