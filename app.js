@@ -31,6 +31,9 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 app.get('/othello', routes.playOthello);
+app.get('/newuser', routes.newuser);
+app.post('/createuser', routes.createuser);
+
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

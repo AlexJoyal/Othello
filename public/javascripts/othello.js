@@ -5,22 +5,7 @@
 //initalize game and board
 function initializeGame(){
 
-    // this returns the number of tiles p1 has as a function of p-1
-    function getStatus(gb) {   
-    	var mm = 0;
-    	for (var i = 11; i <= 88; i++) {   
-    		if (gb[i]) {
-    			if (gb[i].className == 'p1') {
-    		 		mm++;
-    		 	}
-    		 	else {
-    		 		mm--;
-    		 	}
-    		 }	
-		}
-		return mm;    
-    }
-
+    //sets boards up for a new game
     function setUpBoard(){
         var e;
         for (var j = 11; j < 89; j++) {
@@ -29,7 +14,6 @@ function initializeGame(){
                 board[j] = document.getElementById(j.toString());
                 board[j].className = "";
                 board[j].onclick = function() {
-                    //console.log(parseInt(this.id));
                     gameMove(this.id);
                 }
                 
@@ -46,6 +30,7 @@ function initializeGame(){
         showBoard(gameboard);
     }
     
+    //takes the gameboard, and updates board to display changes to the user
     function showBoard(gameboard){
         for (var j = 11; j < 89; j++) {
             if ( (j%10 != 9) && (j%10 != 0) ) { 
@@ -61,6 +46,7 @@ function initializeGame(){
         } 
     }
 
+    //returns true if game is over, false otherwise
     function checkGameOver(gameboard){
 
         //end state test - true when board is full
@@ -75,10 +61,12 @@ function initializeGame(){
             return true;
         }
 
+        getGameScore(gameboard);
+
         if (allTilesFilled()){
             gameover = true;
             GameOver();
-        } else if (getAvailablePlays(gameboard, player1) == "" && getAvailablePlays(gameboard, player2) == ""){
+        } else if (p1Score == 0 || p2Score == 0){
             gameover = true;
             GameOver();
         }
@@ -90,7 +78,7 @@ function initializeGame(){
         //increment games played
         //increment winning players victory total
         //store game board and history of moves
-        //
+        
         console.log("Game Over");
         //gamesPlayed++;
 
@@ -98,10 +86,10 @@ function initializeGame(){
 
     //need to keep track of the board without updating it    
     function virtualMove(gb,id) {
-		
     	return gb;
     }
     
+    //function to determine if array holds a particular value (used to check if a move is in availablePlays)
     function contains(array, value){
         for (var a in array){
             if (array[a] == value){
@@ -112,10 +100,12 @@ function initializeGame(){
     }
     
     function gameMove(id){
+        //do nothing if gameover
         if (gameover){
             return;
         }
-        availablePlays = getAvailablePlays(gameboard, player);
+        //console.log("play: " + id + " : " + availablePlays);
+        
         if (contains(availablePlays, id)){
             GAMEHISTORY.push({'id':id, 'player':player});
             executeMove(gameboard, id, player);
@@ -125,17 +115,20 @@ function initializeGame(){
             player *= -1;
             IagoPlays();
         }
+        //console.log("gameboard: " + gameboard)
+        //availablePlays = getAvailablePlays(gameboard, player);
+        //console.log(availablePlays)
         checkGameOver(gameboard);
         showBoard(gameboard);
         //player *= -1;
         
     }
 
-    // the if statement in here doesn't seem to be doing anything -- 
+
     // it verifies that the id of the move is a valid board location
     function executeMove(gameboard, id, p){
 
-        if (!gameboard[id]){
+        if (gameboard[id] == 0){
             gameboard[id]= p;
             var flips = getFlips(gameboard, id, p);
             for (var a in flips){
@@ -161,8 +154,8 @@ function initializeGame(){
         var L1Ma = [];
         var pGB = [];
         L0Ma = getAvailablePlays(gameboard, player);
-        console.log(player);
-        console.log("L0Ma.length is " + L0Ma.length);
+        //console.log(player);
+        //console.log("L0Ma.length is " + L0Ma.length);
         var bestMove = 0; // best move on board
         var moveSum = -100;
         var bestSum = -100 // sum is why it's the best move
@@ -174,7 +167,7 @@ function initializeGame(){
             pGB = gameboard.slice();
             //flips at L0 are positive
             plus = getFlips(pGB,L0Ma[i], player).length;
-            console.log("plus = " + plus);
+            //console.log("plus = " + plus);
             //call virtual move on possible gameboard - returns modified pGB
             executeMove(pGB, L0Ma[i], player);
             player *= -1;
@@ -190,18 +183,18 @@ function initializeGame(){
             //iterate through available L1 moves
             for (var j = 0; j < L1Ma.length; j++){
                 //flips at L1 are negative
-                console.log("L1Ma[j] = " + L1Ma[j]);
+                //console.log("L1Ma[j] = " + L1Ma[j]);
                 minus = getFlips(pGB,L1Ma[j], player*-1).length;
-                console.log("minus = " + minus);
+                //console.log("minus = " + minus);
                 moveSum = (plus - minus);
-                console.log("plus - minus = " + moveSum);
+                //console.log("plus - minus = " + moveSum);
                 if (moveSum > bestSum) {
                     bestSum = moveSum;
                     bestMove = L0Ma[i];
                 }
             }
         }
-        console.log("bestMove is " + bestMove + " " + player);
+        //console.log("bestMove is " + bestMove + " " + player);
         //executeMove(gameboard,bestMove, player);
 
         //endL2
@@ -211,9 +204,13 @@ function initializeGame(){
             return;
         }
         GAMEHISTORY.push({'id':bestMove, 'player':player});
-        setTimeout(function(){executeMove(gameboard, bestMove, player);}, 1000);
+        setTimeout(function(){
+            executeMove(gameboard, bestMove, player);
+            availablePlays = getAvailablePlays(gameboard, player);
+        }, 1000);
     }
 
+    //iterates through the board counting each players pieces
     function getGameScore(gameboard){
         p1Score = 0;
         p2Score = 0;
@@ -285,60 +282,20 @@ function initializeGame(){
         return flips;
     }
 
+    //broken
     function replayMove(id, player, moves){
         counter++;
         if (counter >= moves.length){
-            executeMove(id, player);
+            executeMove(gameboard, id, player);
             return;
         } else {
-            executeMove(id, player);
+            executeMove(gameboard, id, player);
         }
         //console.log(counter);
         setTimeout(function() {replayMove(moves[counter].id, moves[counter].player, moves);}, 1000);
     }
 
-    //this accepts the gameboard and returns the new move when the +player makes the best decision 
-    //implicit assumption that the move flips pieces - generating a positive result - else the 
-    //  move would be invalid
-    function getMax(gb){  
-        var nMoves = [];
-        var nFlips = 0;
-        var maxFlips = 0;
-        var maxMove = 0;
-        
-        nMoves = getAvailablePlays(gb, player);
-        //console.log(nMoves);
-        for (var n in nMoves) {
-            nFlips = getFlips(gb,nMoves[n], player);
-            //console.log("move " + n + " has flips: " + nFlips);
-            if (nFlips.length > maxFlips) {
-                maxMove = nMoves[n];
-                maxFlips = nFlips.length;
-            }
-        }
-        return maxMove;
-    }
     
-    
-    //this accepts the gameboard and returns the new move when the -player makes the best decision 
-    //implicit assumption that the move flips pieces - generating a negative result - else the 
-    //  move would be invalid
-    function getMin(gb){  //this accepts the gameboard and returns the new move when the -player makes the best decision 
-        var nMoves = [];
-        var nFlips = 0;
-        var maxFlips = 0;
-        var minMove = 0;
-        
-        nMoves = getAvailablePlays(gb, player);
-        for (var n in nMoves) {
-            nFlips = getFlips(n);
-            if (nFlips.length < maxFlips) {
-                minMove = n;
-                maxFlips = nFlips.length;
-            }
-        }
-        return minMove;
-    }
     
 
    
@@ -388,15 +345,19 @@ function initializeGame(){
     var newGame = document.getElementById("NewGame");
     newGame.onclick = function(){
         gameboard = [];
-        setUpBoard(gameboard);
+        board = new Array();
+        setUpBoard(); 
         player = player1;
         GAMEHISTORY = [];
+        gameover = false;
+        availablePlays = getAvailablePlays(gameboard, player);
     }
 
     var playPrev = document.getElementById("PreviousGame");
     playPrev.onclick = function(){
         counter = 0;
         gameboard = [];
+        board = [];
         setUpBoard(gameboard);
         replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY);
     }
@@ -416,8 +377,8 @@ function initializeGame(){
     var player = player1;
 	var gameboard =  [];
     var board = [];
-	setUpBoard(gameboard);
-    var availablePlays = getAvailablePlays(gameboard, player);;
+	setUpBoard();
+    var availablePlays = getAvailablePlays(gameboard, player);
     var GAMEHISTORY = [];
 
 }
