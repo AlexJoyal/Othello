@@ -1,0 +1,14 @@
+<!-- Account Creation View -->
+<h1>Create Your Account</h1>
+<form name="createuser" method="post" action="/createuser" onsubmit="return validateCreateForm();" >
+	<table id="createuser">
+		<% if (error !== ""){ %>
+			<tr><td><h2 id="error"><%= error %></h2></td></tr>
+		<%} %>
+		<tr><td><label>Name: </label><input type="text" name="name"></td></tr>
+		<tr><td><label>Password: </label><input type="password" name="password"><td><tr>
+		<tr><td><label>Email: </label><input type="email" name="email"></td></tr>
+		<tr><td><input type="submit" value="Create Account"></td></tr>
+	</table>
+
+</form>
