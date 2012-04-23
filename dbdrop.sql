@@ -1,3 +1,3 @@
 -- Delete database objects:
-DROP TABLE messages;
-DROP SEQUENCE messages_mid_seq;
+DROP TABLE users;
+DROP SEQUENCE user_uid_seq;
