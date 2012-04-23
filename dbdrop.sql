@@ -1,3 +1,5 @@
 -- Delete database objects:
 DROP TABLE users;
-DROP SEQUENCE user_uid_seq;
+DROP TABLE games
+DROP SEQUENCE user_id_seq;
+DROP SEQUENCE game_id_seq;
