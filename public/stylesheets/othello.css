@@ -23,7 +23,7 @@ p {
     text-align: justify;
 }
 
-div.td {
+div table td {
    background-color: #cbcbcb;
    height: 50px;
    width: 50px;

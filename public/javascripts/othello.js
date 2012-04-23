@@ -361,6 +361,11 @@ function initializeGame(){
         setUpBoard(gameboard);
         replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY);
     }
+
+    $('SaveGame').bind('click', function() {
+        //implement me
+    });
+
     var p1Wins = document.getElementById("player1wins");
     var p2Wins = document.getElementById("player2wins");
 

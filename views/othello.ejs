@@ -84,11 +84,18 @@
 	</tr>
 	</table>
 		<button id="NewGame">New Game</button>
-		<button id="PreviousGame">Previous Game</button>
+		<button id="PreviousGame">Replay Last Game</button>
+		<button id="SaveGame">Save Game</button>
+
 		<form>
+			<input type="radio" name="IagoLevel" value="Easy" /> Easy<br />
+			<input type="radio" name="IagoLevel" value="Hard" /> Hard<br />
+			<input type="radio" name="IagoLevel" value="Impossible" /> Impossible<br />
+		</form>
+		<form id="scoreboard">
 		Games Played :<label id="gamesplayed"></label>
 
-		<h3>Wins</h3>
+		<h3>Score</h3>
 		Player1 :<label id="player1wins"></label>
 		Player2 :<label id="player2wins"></label>
 		</form>
