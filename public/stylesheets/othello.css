@@ -1,6 +1,10 @@
 body {
 	font-family: sans-serif, "MS Trebuchet", Helvetica;
 	font-size: 15px;
+	width: 600px;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 50px;
 }
 
 h1 {
@@ -14,11 +18,12 @@ div#board  {
 	right: 40%;
 }
 
-form {
-	margin: 10px
+p {
+	  font: 12px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+    text-align: justify;
 }
 
-td {
+div.td {
    background-color: #cbcbcb;
    height: 50px;
    width: 50px;
