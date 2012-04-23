@@ -110,10 +110,10 @@ function initializeGame(){
             GAMEHISTORY.push({'id':id, 'player':player});
             executeMove(gameboard, id, player);
             showBoard(gameboard);
-            IagoPlays();
+            IagoPlays(player);
         } else if (availablePlays.length == 0){
             player *= -1;
-            IagoPlays();
+            IagoPlays(player);
         }
         //console.log("gameboard: " + gameboard)
         //availablePlays = getAvailablePlays(gameboard, player);
@@ -141,7 +141,7 @@ function initializeGame(){
         showBoard(gameboard);
     }
 
-    function IagoPlays(){
+    function IagoPlays(player){
         /*var bestMove = getMax(gameboard);
         //console.log(bestMove);
         */
