@@ -24,7 +24,7 @@ exports.db = function (user, db) {
 function getUser (user, cb) {
 	var that = this;
 	pg.connect(that.conn, function (err, client) {
-	client.query('select * from users where username=' + user.name + ' and password=' + user.pass + ';',
+	client.query("select * from users where username='" + user.name +"' and password='" + user.pass + "';",
                      function (err, result) {
                          cb(err, result);
                      });
