@@ -110,10 +110,10 @@ function initializeGame(){
             GAMEHISTORY.push({'id':id, 'player':player});
             executeMove(gameboard, id, player);
             showBoard(gameboard);
-            IagoPlays(player);
+            IagoPlays();
         } else if (availablePlays.length == 0){
             player *= -1;
-            IagoPlays(player);
+            IagoPlays();
         }
         //console.log("gameboard: " + gameboard)
         //availablePlays = getAvailablePlays(gameboard, player);
@@ -141,7 +141,7 @@ function initializeGame(){
         showBoard(gameboard);
     }
 
-    function IagoPlays(player){
+    function IagoPlays(){
         /*var bestMove = getMax(gameboard);
         //console.log(bestMove);
         */
@@ -362,8 +362,9 @@ function initializeGame(){
         replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY);
     }
 
-    $('SaveGame').bind('click', function() {
+    $('#SaveGame').bind('click', function(event) {
         //implement me
+        alert("saving game");
     });
 
     var p1Wins = document.getElementById("player1wins");
