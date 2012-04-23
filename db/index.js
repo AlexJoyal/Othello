@@ -21,13 +21,14 @@ exports.db = function (user, db) {
 	return obj;
 }
 
-function getUser (user, cb) {
+function getUser (us, cb) {
 	var that = this;
+	console.log(us.name + " " + us.pass);
 	pg.connect(that.conn, function (err, client) {
-	client.query("select * from users where username='" + user.name +"' and password='" + user.pass + "';",
-                     function (err, result) {
-                         cb(err, result);
-                     });
+	var sql = "select * from users where username='" + us.name +"' and password='" + us.pass + "';"
+	client.query(sql, function (err, result) {
+                             cb(err, result);
+                          });
     });
 };
 
