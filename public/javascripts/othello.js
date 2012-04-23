@@ -342,8 +342,7 @@ function initializeGame(){
     }
 
 
-    var newGame = document.getElementById("NewGame");
-    newGame.onclick = function(){
+    $("#NewGame").bind('click', function(){
         gameboard = [];
         board = new Array();
         setUpBoard(); 
@@ -351,16 +350,15 @@ function initializeGame(){
         GAMEHISTORY = [];
         gameover = false;
         availablePlays = getAvailablePlays(gameboard, player);
-    }
+    });
 
-    var playPrev = document.getElementById("PreviousGame");
-    playPrev.onclick = function(){
+    $("#PreviousGame").bind('click', function(){
         counter = 0;
         gameboard = [];
         board = [];
         setUpBoard(gameboard);
         replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY);
-    }
+    });
 
     $('#SaveGame').bind('click', function(event) {
         //implement me

@@ -25,8 +25,8 @@ p {
 
 div table td {
    background-color: #cbcbcb;
-   height: 50px;
-   width: 50px;
+   height: 49px;
+   width: 49px;
 }
 
 .p0{
@@ -34,12 +34,12 @@ div table td {
 }
 
 .p1 {
-   background-color: black;
+   background-image: url(/images/black_piece.gif);
 
 }
 
 .p-1{
-   background-color: white;
+   background-image: url(/images/white_piece.gif);
 }
 
 .pMove{
