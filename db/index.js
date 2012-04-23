@@ -24,7 +24,7 @@ exports.db = function (user, db) {
 function getUser (user, cb) {
 	var that = this;
 	pg.connect(that.conn, function (err, client) {
-	client.query('select * from users where username =' + user + ';',
+	client.query('select * from users where username=' + user.name + ' and password=' + user.pass + ';',
                      function (err, result) {
                          cb(err, result);
                      });
@@ -35,7 +35,7 @@ function addUser(user, cb){
 	var that = this;
     	pg.connect(that.conn, function (err, client) {
         var sql = 'insert into users values(default, $1, $2, $3, now());';
-        client.query(sql, [user.username, user.pass, user.email],
+        client.query(sql, [user.name, user.pass, user.email],
                     function (err, result) {
                         cb(err, result);
                     });

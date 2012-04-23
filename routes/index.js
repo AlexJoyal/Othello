@@ -2,6 +2,7 @@
 /*
  * GET home page.
  */
+var db = require('./db');
 
 exports.index = function(req, res){
   res.render('index', { title: 'Express,,' })
@@ -27,12 +28,25 @@ exports.createuser = function(req, res){
                 'name': name,
                 'pass': password,
                 'email': email,
-                'createDate': Date.now()
         	};
-        addUser(user);
+        db.addUser(user,function(err, result){
+        	if (err){
+        		console.log(err);
+        	} else {
+	        	console.log("User %s added", name);
+     		}
+        });
     } else {
         res.render('newuser', {title:"Register", error: "Sorry, user name already in use."})
     }
     
     res.redirect('/login');
+}
+
+exports.savegame = function(req, res){
+
+}
+
+exports.loadgame = function(req, res){
+	
 }
