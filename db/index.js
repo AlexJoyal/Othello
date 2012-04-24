@@ -16,8 +16,8 @@ exports.db = function (user, db) {
 	obj.conn = 'tcp://' + user + '@' + host + ':' + port + '/' + db;
 	obj.getUser = getUser;
 	obj.addUser = addUser;
-    	obj.getGame = getGame;
-    	obj.addGame = addGame;
+    obj.getGame = getGame;
+    obj.addGame = addGame;
 	obj.getUserByEmail = getUserByEmail;
 	return obj;
 }

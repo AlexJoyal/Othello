@@ -1,5 +1,5 @@
 <h1>Create Your Account</h1>
-<form name="createuser" method="post" action="/createuser">
+<form name="createuser" method="post" action="/createuser" onsubmit="return validateCreateForm();>
 	<table id="createuser">
 		<% if (error !== ""){ %>
 			<tr><td><h2 id="error"><%= error %></h2></td></tr>
