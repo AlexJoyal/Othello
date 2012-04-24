@@ -70,7 +70,20 @@ exports.savegame = function(req, res){
 }
 
 exports.loadgame = function(req, res){
-	
+	var uid = req.session.user;
+	var gid = req.params.id;
+
+	db.getGame(uid, gid, 
+		function(err, result){
+			if(err){
+				console.log(err);
+			} else {
+				res.render('othello', {
+						game: result.rows[0].game
+				});
+			}
+
+	})
 }
 
 exports.gameHistory = function(req, res){

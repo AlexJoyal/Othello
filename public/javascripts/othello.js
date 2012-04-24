@@ -406,6 +406,8 @@ function initializeGame(){
     var uid = 0;
     var gameover = false;
     var PLAYER = PLAYER1;
+    var loadgame = JSON.parse($('#loadgame').val());
+    console.log(loadgame)
 	var gameboard =  [];
     var board = [];
 	setUpBoard();
