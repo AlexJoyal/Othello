@@ -53,11 +53,11 @@ function getGame (uid, gameID, cb) {
     });
 };
 
-function addGame (game, cb){
+function addGame (uid, game, cb){
     var that = this;
         pg.connect(that.conn, function (err, client) {
-        var sql = 'insert into games values(default, $1, now());';
-        client.query(sql, [game],
+        var sql = 'insert into games values(default, $1, $2, now());';
+        client.query(sql, [uid, game],
                     function (err, result) {
                         cb(err, result);
                     });

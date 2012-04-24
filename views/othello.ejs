@@ -83,21 +83,25 @@
 	   <td id="88"></td>
 	</tr>
 	</table>
-		<button id="NewGame">New Game</button>
+
+</div>
+
+<div id="settings"
+<button id="NewGame">New Game</button>
 		<button id="PreviousGame">Replay Last Game</button>
 		<button id="SaveGame">Save Game</button>
 
-		<form>
-			<input type="radio" name="IagoLevel" value="Easy" /> Easy<br />
-			<input type="radio" name="IagoLevel" value="Hard" /> Hard<br />
-			<input type="radio" name="IagoLevel" value="Impossible" /> Impossible<br />
+		<form id="difficulty">
+			<h3>Difficulty</h3>
+			<input type="radio" name="IagoLevel" value="1" checked="yes" /> Easy<br />
+			<input type="radio" name="IagoLevel" value="3" /> Hard<br />
+			<input type="radio" name="IagoLevel" value="5" /> Impossible<br />
 		</form>
 		<form id="scoreboard">
-		Games Played :<label id="gamesplayed"></label>
-
 		<h3>Score</h3>
 		Player1 :<label id="player1wins"></label>
 		Player2 :<label id="player2wins"></label>
+		Games Played :<label id="gamesplayed"></label>
 		</form>
 </div>
 <script type="text/javascript" src="/javascripts/othello.js"></script>
