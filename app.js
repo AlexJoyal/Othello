@@ -42,8 +42,7 @@ app.get('/home', routes.gameHistory);
 app.post('/login', routes.login);
 app.get('/login', function(req, res){
     var loggedIn = req.session.user;
-    //console.log(loggedIn);
-    //redirect to /transactions if theres is a valid session
+\
     if (loggedIn){
         res.redirect('/othello');
         return;

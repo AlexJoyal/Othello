@@ -70,21 +70,31 @@ exports.savegame = function(req, res){
 exports.loadgame = function(req, res){
 	var uid = req.session.user;
 	var gid = req.params.id;
+	var game;
 
-	db.getGame(uid, gid, 
-		function(err, result){
-			if(err){
-				console.log(err);
-			} else {
-				console.log(result.rows[0].game);
-				res.render('othello', {
-						title: "Othello",
-						user: true,
-						game: result.rows[0].game
-				});
-			}
+	if (uid){
+		db.getGame(uid, gid, 
+			function(err, result){
+				if(err){
+					console.log(err);
+				} else if (result.rows != ""){
+					res.render('othello', {
+							title: "Othello",
+							user: true,
+							game: result.rows[0].game
+					});
+				} else {
+					res.render('othello', {
+							title: "Othello",
+							user: true,
+							game: ""
+					});
+				}
 
-	})
+		});
+	} else {
+		res.redirect('/othello');
+	}
 }
 
 exports.gameHistory = function(req, res){
