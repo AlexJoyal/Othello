@@ -4,7 +4,7 @@ body {
 	width: 600px;
     margin-right: auto;
     margin-left: auto;
-    padding: 50px;
+    padding: 10px;
 }
 
 h1 {
@@ -13,11 +13,14 @@ h1 {
 }
 
 div#board  {
-	position: absolute;
-	top: 10%;
-	right: 40%;
+	float: left;
+	text-align: center;
+	width: 500px;
 }
+div#settings {
+	float: left;
 
+}
 p {
 	  font: 12px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
     text-align: justify;

@@ -32,6 +32,17 @@ function getUser (us, cb) {
     });
 };
 
+function getUserByEmail (email, cb) {
+    var that = this;
+    console.log(us.name + " " + us.pass);
+    pg.connect(that.conn, function (err, client) {
+    var sql = "select * from users where email='" + email + "';"
+    client.query(sql, function (err, result) {
+                             cb(err, result);
+                          });
+    });
+};
+
 function addUser(user, cb){
 	var that = this;
     	pg.connect(that.conn, function (err, client) {

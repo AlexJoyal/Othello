@@ -347,9 +347,10 @@ function initializeGame(){
         var nGB = cGB.slice();
         nGB = virtualMove(nGB, cMove, cPlayer);
         var nMoves = getAvailablePlays(nGB, cPlayer);
+        var nPlayer = cPlayer * -1;
         var bestSum = 0;
         for (var m in nMoves) {
-            cSum = cFlips.length - miniMax(m, nGB, cPlayer, cDepth, fDepth);
+            cSum = cFlips.length - miniMax(m, nGB, nPlayer, cDepth, fDepth);
             if (cSum > bestSum) {
                 bestSum = cSum;
             }
