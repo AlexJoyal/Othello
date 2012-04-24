@@ -10,12 +10,9 @@ exports.index = function(req, res){
 };
 
 exports.playOthello = function(req, res){
-	var user = req.session.user;
-	console.log("user : " + user + " is logged in")
-	if (!user) {
-		user = 0;
-	}
-	res.render('othello', {title: "Othello", game: "", user: true})
+	var user;
+	(req.session.user) ? user = true : user = false;
+	res.render('othello', {title: "Othello", game: "", user: user})
 }
 
 exports.newuser = function(req, res){
@@ -92,20 +89,23 @@ exports.loadgame = function(req, res){
 
 exports.gameHistory = function(req, res){
 	var user = req.session.user;
-	var games;
-	db.getGames(user, 
-		function(err, result){
-			if (err){
-				console.log(err);
-			} else {
-				games = result.rows;
-				res.render('home', {title: "Home",
-						games: games,
-						user: true
-					});
+	if (user){
+		db.getGames(user, 
+			function(err, result){
+				if (err){
+					console.log(err);
+				} else {
+					games = result.rows;
+					res.render('home', {title: "Home",
+							games: games,
+							user: true
+						});
 
-			}
-	});
+				}
+		});
+	} else {
+		res.redirect('/othello');
+	}
 }
 
 exports.login = function(req, res) {
