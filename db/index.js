@@ -19,6 +19,7 @@ exports.db = function (user, db) {
     obj.getGame = getGame;
     obj.addGame = addGame;
 	obj.getUserByEmail = getUserByEmail;
+	obj.getGames = getGames
 	return obj;
 }
 
@@ -52,6 +53,16 @@ function addUser(user, cb){
                     });
         });
 }
+
+function getGames (uid, cb) {
+    var that = this;
+    pg.connect(that.conn, function (err, client) {
+    client.query('select * from games where uid =' + uid + ';',
+                     function (err, result) {
+                         cb(err, result);
+                     });
+    });
+};
 
 function getGame (uid, gameID, cb) {
     var that = this;

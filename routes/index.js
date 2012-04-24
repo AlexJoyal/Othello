@@ -76,18 +76,19 @@ exports.loadgame = function(req, res){
 exports.gameHistory = function(req, res){
 	var user = req.session.user;
 	var games;
-
+	console.log(user);
 	db.getGames(user, 
 		function(err, result){
 			if (err){
 				console.log(err);
 			} else {
 				games = result.rows;
+				console.log(games);
 			}
 	});
 	res.render('home', {title: "Home",
 						games: games,
-						user: true;
+						user: true
 					});
 }
 
