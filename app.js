@@ -16,7 +16,8 @@ app.configure(function(){
   app.set('view engine', 'ejs');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.session({ secret: 'cs391wp' }));
+  app.use(express.cookieParser());
+  app.use(express.session({ secret: 'othello' }));
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
