@@ -51,7 +51,6 @@ exports.savegame = function(req, res){
 	var uid = data.uid;
 	var game = data.game;
 	console.log(game);
-	/*
 	db.addGame(uid, game, 
 			function(err, result){
 				if(err){
@@ -60,7 +59,6 @@ exports.savegame = function(req, res){
 					console.log("Game added")
 				}
 	});
-	*/
 }
 
 exports.loadgame = function(req, res){

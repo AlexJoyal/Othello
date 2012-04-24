@@ -218,7 +218,7 @@ function initializeGame(){
             availablePlays = getAvailablePlays(gameboard, PLAYER);
             return;
         }
-        GAMEHISTORY.push({'id':bestMove, 'PLAYER':PLAYER});
+        GAMEHISTORY.push({'id':bestMove, 'player':PLAYER});
         setTimeout(function(){
             executeMove(gameboard, bestMove, PLAYER);
             availablePlays = getAvailablePlays(gameboard, PLAYER);
