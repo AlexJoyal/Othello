@@ -1,7 +1,7 @@
 <h1>Game History - Saved Games</h1>
 <table id="gamehistory">
-	<tr><td>Date</td><td>Type</td>
+	<tr><td>GameID</td><td>Date</td></tr>
 	<% for (var i in games) {%>
-   		<tr><td><%= new Date(games[i].date).toLocaleString() %></td></tr>
+   		<tr><td><% games[i].gid %></tr></td><tr><td><%= new Date(games[i].tstamp).toLocaleString() %></td></tr>
 	<%} %>
 </table>
