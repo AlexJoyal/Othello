@@ -102,11 +102,11 @@ function initializeGame(){
     
     function gameMove(id){
         //do nothing if gameover
-        if (gameover){
+        if (gameover || PLAYER != 1){
             return;
         }
         //console.log("play: " + id + " : " + availablePlays);
-        
+        YOURTURN = false;
         if (contains(availablePlays, id)){
             GAMEHISTORY.push({'id':id, 'player':PLAYER});
             executeMove(gameboard, id, PLAYER);
@@ -148,7 +148,7 @@ function initializeGame(){
       
         var nMoves = getAvailablePlays(gameboard, p);
         //console.log(nMoves)
-        var bestMove = 0;
+        var bestMove = -1;
         var bestSum = -100;
         for (var m in nMoves) {
             cSum = miniMax(nMoves[m], gameboard, p, 1, LEVEL);
@@ -158,70 +158,12 @@ function initializeGame(){
                 //console.log("BestMove: " + bestMove)
             }
         }
-        
 
-
-        /*var bestMove = getMax(gameboard);
-        //console.log(bestMove);
-        
-        //L2 - choose best move for two plays later assuming opponent is infallible
-        // attempt 1 - just add + - and generate a number
-        //need to find max of min of max
-        var L0Moves = [];
-        var L0Ma = [];
-        var L1Moves = [];
-        var L1Ma = [];
-        var pGB = [];
-        L0Ma = getAvailablePlays(gameboard, PLAYER);
-        //console.log(PLAYER);
-        //console.log("L0Ma.length is " + L0Ma.length);
-        var bestMove = 0; // best move on board
-        var moveSum = -100;
-        var bestSum = -100 // sum is why it's the best move
-        var plus = 0;
-        var minus = 0;
-        //iterate through available moves
-        for (var i = 0; i < L0Ma.length; i++){
-            //create gameboard copy for possible gameboard
-            pGB = gameboard.slice();
-            //flips at L0 are positive
-            plus = getFlips(pGB,L0Ma[i], PLAYER).length;
-            //console.log("plus = " + plus);
-            //call virtual move on possible gameboard - returns modified pGB
-            executeMove(pGB, L0Ma[i], PLAYER);
-            PLAYER *= -1;
-            // need to test pGB
-            //for (var i = 11; i <= 88; i++) {
-            //    console.log("occ " + pGB[i]);
-            //}
-            
-            //switch PLAYERs
-
-            //get available moves for L1
-            L1Ma = getAvailablePlays(pGB, PLAYER*-1);
-            //iterate through available L1 moves
-            for (var j = 0; j < L1Ma.length; j++){
-                //flips at L1 are negative
-                //console.log("L1Ma[j] = " + L1Ma[j]);
-                minus = getFlips(pGB,L1Ma[j], PLAYER*-1).length;
-                //console.log("minus = " + minus);
-                moveSum = (plus - minus);
-                //console.log("plus - minus = " + moveSum);
-                if (moveSum > bestSum) {
-                    bestSum = moveSum;
-                    bestMove = L0Ma[i];
-                }
-            }
-        }
-        //console.log("bestMove is " + bestMove + " " + PLAYER);
-        //executeMove(gameboard,bestMove, PLAYER);
-
-        //endL2
-        */
         if (bestMove === 0){
             console.log("Iago has no moves! Your turn")
             PLAYER *= -1;
             availablePlays = getAvailablePlays(gameboard, PLAYER);
+	    YOURTURN = true;
             return;
         }
         GAMEHISTORY.push({'id':bestMove, 'player':PLAYER});
@@ -231,6 +173,7 @@ function initializeGame(){
 	    if(availablePlays.length == 0){
 	        IagoPlays(PLAYER *= -1)	
 	    }			
+	    YOURTURN = true;
         }, 1000);
     }
 
@@ -373,6 +316,7 @@ function initializeGame(){
         board = new Array();
         setUpBoard(); 
         PLAYER = PLAYER1;
+	YOURTURN = true;
         GAMEHISTORY = [];
         gameover = false;
         availablePlays = getAvailablePlays(gameboard, PLAYER);
@@ -403,6 +347,7 @@ function initializeGame(){
     var displayP1Wins = $("#player1Wins");
     var displayP2Wins = $('#player2Wins');
 
+    var YOURTURN = true;
     var LEVEL;
     var counter = 0;
 	var PLAYER1 = 1;
