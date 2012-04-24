@@ -6,11 +6,16 @@ var database = require('db');
 db = database.db('ajoyal');
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Express,,' })
+  res.render('index', { title: 'Express' })
 };
 
 exports.playOthello = function(req, res){
-	res.render('othello', {title: "Othello"})
+	var user = req.session.user;
+	console.log("user : " + user + " is logged in")
+	if (!user) {
+		user = 0;
+	}
+	res.render('othello', {title: "Othello", user: user})
 }
 
 exports.newuser = function(req, res){
@@ -48,7 +53,7 @@ exports.createuser = function(req, res){
 
 exports.savegame = function(req, res){
 	var data = req.body;
-	var uid = data.uid;
+	var uid = req.session.user;
 	var game = data.game;
 	console.log(game);
 	db.addGame(uid, game, 
