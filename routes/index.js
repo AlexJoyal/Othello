@@ -79,7 +79,7 @@ exports.loadgame = function(req, res){
 				console.log(result.rows[0].game);
 				res.render('othello', {
 						title: "Othello",
-						user:true,
+						user: true,
 						game: result.rows[0].game
 				});
 			}

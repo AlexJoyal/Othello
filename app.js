@@ -48,7 +48,7 @@ app.get('/login', function(req, res){
         res.redirect('/othello');
         return;
     }
-    res.render('login', {title: 'User Login', error: ""});
+    res.render('login', {title: 'User Login', user: false, error: ""});
 });
 app.get('/logout', routes.logout);
 
