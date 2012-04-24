@@ -78,7 +78,13 @@ function initializeGame(){
         //increment games played
         //increment winning PLAYERs victory total
         //store game board and history of moves
-        
+        if(p1Score > p2Score){
+	    p1Wins++;
+	} else if (p1Score < p2Score){
+	    p2Wins++;
+	}
+	displayP1Wins.html(p1Wins);
+	displayP2Wins.html(p2Wins);
         console.log("Game Over");
         //gamesPlayed++;
 
@@ -110,12 +116,12 @@ function initializeGame(){
             PLAYER *= -1;
             IagoPlays(PLAYER);
         }
-        //console.log("gameboard: " + gameboard)
-        //availablePlays = getAvailablePlays(gameboard, PLAYER);
-        //console.log(availablePlays)
+	
+        //availableplays = getavailableplays(gameboard, player);
+        //console.log(availableplays)
         checkGameOver(gameboard);
         showBoard(gameboard);
-        //PLAYER *= -1;
+        //player *= -1;
         
     }
 
@@ -222,6 +228,9 @@ function initializeGame(){
         setTimeout(function(){
             executeMove(gameboard, bestMove, PLAYER);
             availablePlays = getAvailablePlays(gameboard, PLAYER);
+	    if(availablePlays.length == 0){
+	        IagoPlays(PLAYER *= -1)	
+	    }			
         }, 1000);
     }
 
@@ -239,8 +248,8 @@ function initializeGame(){
                 }
             }
         }
-        p1Wins.html(p1Score);
-        p2Wins.html(p2Score);
+        displayP1Score.html(p1Score);
+        displayP2Score.html(p2Score);
     }
 
     function getAvailablePlays(gb, player){  // this returns a list of available moves - no flips unless we can map it
@@ -340,7 +349,6 @@ function initializeGame(){
     var cFlips = getFlips(cGB, cMove, cPlayer);
     
     if (cDepth == fDepth) {
-        console.log("fDepth: " + fDepth)
         return cFlips.length;
     } else {
         cDepth++;
@@ -355,7 +363,6 @@ function initializeGame(){
                 bestSum = cSum;
             }
         }
-        console.log(cDepth)
         return bestSum;
         }
     }
@@ -391,17 +398,24 @@ function initializeGame(){
         });
     });
 
-    var p1Wins = $("#player1wins");
-    var p2Wins = $("#player2wins");
+    var displayP1Score = $("#player1Score");
+    var displayP2Score = $("#player2Score");
+    var displayP1Wins = $("#player1Wins");
+    var displayP2Wins = $('#player2Wins');
+
     var LEVEL;
     var counter = 0;
 	var PLAYER1 = 1;
 	var PLAYER2 = -1;
     var p1Score = 0;
     var p2Score = 0;
+    var p1Wins = 0;
+    var p2Wins = 0;
 
-	p1Wins.html(p1Score);
-    p2Wins.html(p2Score);
+    displayP1Score.html(p1Score);
+    displayP2Score.html(p2Score);
+    displayP1Wins.html(p1Wins);
+    displayP2Wins.html(p2Wins);
 
     var uid = 0;
     var gameover = false;

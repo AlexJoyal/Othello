@@ -42,7 +42,6 @@ app.get('/home', routes.gameHistory);
 app.post('/login', routes.login);
 app.get('/login', function(req, res){
     var loggedIn = req.session.user;
-\
     if (loggedIn){
         res.redirect('/othello');
         return;
