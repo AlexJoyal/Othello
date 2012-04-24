@@ -2,6 +2,6 @@
 <table id="gamehistory">
 	<tr><td>GameID</td><td>Date</td></tr>
 	<% for (var i in games) {%>
-   		<tr><td><% games[i].gid %></tr></td><tr><td><%= new Date(games[i].tstamp).toLocaleString() %></td></tr>
+   		<tr><td><a href=/loadgame/<%= games[i].gid %>><%= games[i].gid %></td><td><%= games[i].tstamp %></td></tr>
 	<%} %>
 </table>

@@ -49,6 +49,7 @@ app.get('/login', function(req, res){
     }
     res.render('login', {title: 'User Login', error: ""});
 });
+app.get('/logout', routes.logout);
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

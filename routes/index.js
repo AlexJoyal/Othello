@@ -83,13 +83,13 @@ exports.gameHistory = function(req, res){
 				console.log(err);
 			} else {
 				games = result.rows;
-				console.log(games);
-			}
-	});
-	res.render('home', {title: "Home",
+				res.render('home', {title: "Home",
 						games: games,
 						user: true
 					});
+
+			}
+	});
 }
 
 exports.login = function(req, res) {
