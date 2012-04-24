@@ -376,7 +376,7 @@ function initializeGame(){
         gameboard = [];
         board = [];
         setUpBoard(gameboard);
-        replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].PLAYER, GAMEHISTORY);
+        replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY);
     });
 
     $('#SaveGame').bind('click', function(event) {
@@ -406,13 +406,22 @@ function initializeGame(){
     var uid = 0;
     var gameover = false;
     var PLAYER = PLAYER1;
-    var loadgame = JSON.parse($('#loadgame').val());
-    console.log(loadgame)
-	var gameboard =  [];
+    var loadgame = $('#loadgame').val();
+    console.log("loadgame: " + loadgame)
+    if (loadgame){
+        var GAMEHISTORY = JSON.parse(loadgame);
+	counter = 0;
+        gameboard = [];
+        board = [];
+        setUpBoard(gameboard);
+	replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY)
+    } else {
+	var GAMEHISTORY = [];
+    }
+    var gameboard =  [];
     var board = [];
 	setUpBoard();
     var availablePlays = getAvailablePlays(gameboard, PLAYER);
-    var GAMEHISTORY = [];
 
 }
 

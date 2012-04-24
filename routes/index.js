@@ -15,7 +15,7 @@ exports.playOthello = function(req, res){
 	if (!user) {
 		user = 0;
 	}
-	res.render('othello', {title: "Othello", user: true})
+	res.render('othello', {title: "Othello", game: "", user: true})
 }
 
 exports.newuser = function(req, res){
@@ -55,6 +55,7 @@ exports.savegame = function(req, res){
 	var data = req.body;
 	var uid = req.session.user;
 	var game = data.game;
+	console.log(game);
 	if (uid){
 		db.addGame(uid, game, 
 			function(err, result){
@@ -78,7 +79,10 @@ exports.loadgame = function(req, res){
 			if(err){
 				console.log(err);
 			} else {
+				console.log(result.rows[0].game);
 				res.render('othello', {
+						title: "Othello",
+						user:true,
 						game: result.rows[0].game
 				});
 			}
