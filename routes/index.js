@@ -15,7 +15,7 @@ exports.playOthello = function(req, res){
 	if (!user) {
 		user = 0;
 	}
-	res.render('othello', {title: "Othello", user: user})
+	res.render('othello', {title: "Othello", user: true})
 }
 
 exports.newuser = function(req, res){
@@ -55,19 +55,40 @@ exports.savegame = function(req, res){
 	var data = req.body;
 	var uid = req.session.user;
 	var game = data.game;
-	console.log(game);
-	db.addGame(uid, game, 
+	if (uid){
+		db.addGame(uid, game, 
 			function(err, result){
 				if(err){
 					console.log(err)
 				} else {
 					console.log("Game added")
 				}
-	});
+		});
+	} else {
+		console.log("Game not saved, no user logged in")
+	}
 }
 
 exports.loadgame = function(req, res){
 	
+}
+
+exports.gameHistory = function(req, res){
+	var user = req.session.user;
+	var games;
+
+	db.getGames(user, 
+		function(err, result){
+			if (err){
+				console.log(err);
+			} else {
+				games = result.rows;
+			}
+	});
+	res.render('home', {title: "Home",
+						games: games,
+						user: true;
+					});
 }
 
 exports.login = function(req, res) {
@@ -83,10 +104,10 @@ exports.login = function(req, res) {
 	db.getUser(user, function(err, result){
 			if (err){
 			    res.render('login', {title: 'User Login', error: "Invalid username or password"});
-			} else {
-				req.session.user = result.rows[0].uid;
-				res.redirect('/othello');
-				return;
+			} else if (result.rows != ""){
+					req.session.user = result.rows[0].uid;
+					res.redirect('/home');
+					return;
 			}
 
 	});
