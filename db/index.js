@@ -16,14 +16,14 @@ exports.db = function (user, db) {
 	obj.conn = 'tcp://' + user + '@' + host + ':' + port + '/' + db;
 	obj.getUser = getUser;
 	obj.addUser = addUser;
-    obj.getGame = getGame;
-    obj.addGame = addGame
+    	obj.getGame = getGame;
+    	obj.addGame = addGame;
+	obj.getUserByEmail = getUserByEmail;
 	return obj;
 }
 
 function getUser (us, cb) {
 	var that = this;
-	console.log(us.name + " " + us.pass);
 	pg.connect(that.conn, function (err, client) {
 	var sql = "select * from users where username='" + us.name +"' and password='" + us.pass + "';"
 	client.query(sql, function (err, result) {
@@ -34,7 +34,6 @@ function getUser (us, cb) {
 
 function getUserByEmail (email, cb) {
     var that = this;
-    console.log(us.name + " " + us.pass);
     pg.connect(that.conn, function (err, client) {
     var sql = "select * from users where email='" + email + "';"
     client.query(sql, function (err, result) {

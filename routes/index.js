@@ -2,8 +2,8 @@
 /*
  * GET home page.
  */
-//var database = require('./db');
-//db = database('ajoyal')
+var database = require('db');
+db = database.db('ajoyal');
 
 exports.index = function(req, res){
   res.render('index', { title: 'Express,,' })
