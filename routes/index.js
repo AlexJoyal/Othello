@@ -16,7 +16,7 @@ exports.playOthello = function(req, res){
 }
 
 exports.newuser = function(req, res){
-	res.render('newuser', {title: 'Register', error: ""});
+	res.render('newuser', {title: 'Register', user: false, error: ""});
 }
 
 exports.createuser = function(req, res){

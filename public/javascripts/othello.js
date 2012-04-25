@@ -50,6 +50,7 @@ function initializeGame(){
     function checkGameOver(gameboard){
 
         //end state test - true when board is full
+        console.log("checking game over...")
         function allTilesFilled() {
             for (var i = 11; i <= 88; i++) {
                 if ( (i%10 != 9) && (i%10 != 0) ) { 
@@ -101,28 +102,25 @@ function initializeGame(){
     }
     
     function gameMove(id){
+        if (loadgame){
+            availablePlays = getAvailablePlays(gameboard, PLAYER);
+            loadgame = "";
+        }
         //do nothing if gameover
         if (gameover || PLAYER != 1){
             return;
-        }
+        } 
         //console.log("play: " + id + " : " + availablePlays);
         YOURTURN = false;
         if (contains(availablePlays, id)){
             GAMEHISTORY.push({'id':id, 'player':PLAYER});
             executeMove(gameboard, id, PLAYER);
-            showBoard(gameboard);
-            IagoPlays(PLAYER);
-        } else if (availablePlays.length == 0){
-            PLAYER *= -1;
             IagoPlays(PLAYER);
         }
 	
-        //availableplays = getavailableplays(gameboard, player);
-        //console.log(availableplays)
-        checkGameOver(gameboard);
-        showBoard(gameboard);
-        //player *= -1;
+        console.log("User played")
         
+        checkGameOver(gameboard);
     }
 
 
@@ -130,6 +128,7 @@ function initializeGame(){
     function executeMove(gameboard, id, p){
 
         if (gameboard[id] == 0){
+            //GAMEHISTORY.push({'id': id, player: p})
             gameboard[id]= p;
             var flips = getFlips(gameboard, id, p);
             for (var a in flips){
@@ -163,17 +162,18 @@ function initializeGame(){
             console.log("Iago has no moves! Your turn")
             PLAYER *= -1;
             availablePlays = getAvailablePlays(gameboard, PLAYER);
-	    YOURTURN = true;
+            YOURTURN = true;
             return;
         }
         GAMEHISTORY.push({'id':bestMove, 'player':PLAYER});
         setTimeout(function(){
             executeMove(gameboard, bestMove, PLAYER);
             availablePlays = getAvailablePlays(gameboard, PLAYER);
-	    if(availablePlays.length == 0){
+            checkGameOver(gameboard);
+	    if(availablePlays.length == 0 & !gameover){
 	        IagoPlays(PLAYER *= -1)	
-	    }			
-	    YOURTURN = true;
+	    }
+        YOURTURN = true;
         }, 1000);
     }
 
@@ -252,11 +252,13 @@ function initializeGame(){
     //broken
     function replayMove(id, player, moves){
         counter++;
+        console.log("replaying..." + counter + "moves length: " + moves.length)
         if (counter >= moves.length){
-            executeMove(gameboard, id, PLAYER);
+            executeMove(gameboard, id, player);
+            console.log("finished")
             return;
         } else {
-            executeMove(gameboard, id, PLAYER);
+            executeMove(gameboard, id, player);
         }
         //console.log(counter);
         setTimeout(function() {replayMove(moves[counter].id, moves[counter].player, moves);}, 1000);
@@ -316,7 +318,7 @@ function initializeGame(){
         board = new Array();
         setUpBoard(); 
         PLAYER = PLAYER1;
-	YOURTURN = true;
+	    YOURTURN = true;
         GAMEHISTORY = [];
         gameover = false;
         availablePlays = getAvailablePlays(gameboard, PLAYER);
@@ -327,6 +329,7 @@ function initializeGame(){
         gameboard = [];
         board = [];
         setUpBoard(gameboard);
+        console.log("Gamehistory length: " + GAMEHISTORY.length);
         replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY);
     });
 
@@ -373,6 +376,7 @@ function initializeGame(){
     var loadgame = $('#loadgame').val();
     if (loadgame){
         GAMEHISTORY = JSON.parse(loadgame);
+        console.log("GAMEHISTORY length: " + GAMEHISTORY.length )
         counter = 0;
         replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY)
     } else {
