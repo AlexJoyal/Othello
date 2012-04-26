@@ -63,11 +63,16 @@ function initializeGame(){
         }
 
         getGameScore(gameboard);
+        var p1Plays = getAvailablePlays(gameboard, PLAYER1);
+        var p2Plays = getAvailablePlays(gameboard, PLAYER2);
 
         if (allTilesFilled()){
             gameover = true;
             GameOver();
         } else if (p1Score == 0 || p2Score == 0){
+            gameover = true;
+            GameOver();
+        } else  if (p1Plays.length == 0 || p2Plays.length == 0){
             gameover = true;
             GameOver();
         }
@@ -81,13 +86,15 @@ function initializeGame(){
         //store game board and history of moves
         if(p1Score > p2Score){
 	    p1Wins++;
+        $('#notify').html("You Win!");
 	} else if (p1Score < p2Score){
 	    p2Wins++;
+        $('#notify').html("You Lost, better luck next time!")
 	}
 	displayP1Wins.html(p1Wins);
 	displayP2Wins.html(p2Wins);
-        console.log("Game Over");
-        //gamesPlayed++;
+    console.log("Game Over");
+    //gamesPlayed++;
 
     }
     
@@ -170,7 +177,7 @@ function initializeGame(){
             executeMove(gameboard, bestMove, PLAYER);
             availablePlays = getAvailablePlays(gameboard, PLAYER);
             checkGameOver(gameboard);
-	    if(availablePlays.length == 0 & !gameover){
+	    if(availablePlays.length == 0 && !gameover){
 	        IagoPlays(PLAYER *= -1)	
 	    }
         YOURTURN = true;
