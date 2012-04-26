@@ -85,17 +85,15 @@ function initializeGame(){
         //increment winning PLAYERs victory total
         //store game board and history of moves
         if(p1Score > p2Score){
-	    p1Wins++;
-        $('#notify').html("You Win!");
-	} else if (p1Score < p2Score){
-	    p2Wins++;
-        $('#notify').html("You Lost, better luck next time!")
-	}
-	displayP1Wins.html(p1Wins);
-	displayP2Wins.html(p2Wins);
-    console.log("Game Over");
-    //gamesPlayed++;
-
+            p1Wins++;
+            $('#notify').html("You Win!");
+        } else if (p1Score < p2Score){
+            p2Wins++;
+            $('#notify').html("You Lost, better luck next time!")
+        }
+        displayP1Wins.html(p1Wins);
+        displayP2Wins.html(p2Wins);
+        console.log("Game Over");
     }
     
     //function to determine if array holds a particular value (used to check if a move is in availablePlays)
@@ -109,25 +107,36 @@ function initializeGame(){
     }
     
     function gameMove(id){
+
+        //do nothing if gameover
+        if (gameover || !YOURTURN){
+            return;
+        } 
+        YOURTURN = false; //no longer your turn
+
+        //if we just loaded a game, get the available moves
         if (loadgame){
             availablePlays = getAvailablePlays(gameboard, PLAYER);
             loadgame = "";
         }
-        //do nothing if gameover
-        if (gameover || PLAYER != 1){
-            return;
-        } 
-        //console.log("play: " + id + " : " + availablePlays);
-        YOURTURN = false;
+
+        
+
         if (contains(availablePlays, id)){
-            GAMEHISTORY.push({'id':id, 'player':PLAYER});
-            executeMove(gameboard, id, PLAYER);
-            IagoPlays(PLAYER);
+            GAMEHISTORY.push({'id':id, 'player':PLAYER1});
+            uGB = gameboard.slice();
+            executeMove(gameboard, id, PLAYER1);
+            
+
+            IagoPlays(PLAYER2);
+        } else {
+            YOURTURN = true;
+            return;
         }
 	
-        console.log("User played")
+        //console.log("User played")
         
-        checkGameOver(gameboard);
+        //checkGameOver(gameboard);
     }
 
 
@@ -143,7 +152,7 @@ function initializeGame(){
                 //console.log(PLAYER);
             }
         }
-        PLAYER *= -1;
+        //PLAYER *= -1;
         getGameScore(gameboard);
         showBoard(gameboard);
     }
@@ -160,29 +169,64 @@ function initializeGame(){
             cSum = miniMax(nMoves[m], gameboard, p, 1, LEVEL);
             //console.log("cSum: " + cSum + " bestSum: " + bestSum)
             if (cSum > bestSum) {
+                bestSum = cSum;
                 bestMove = nMoves[m];
                 //console.log("BestMove: " + bestMove)
             }
         }
 
-        if (bestMove === 0){
+        if (bestMove === -1){
             console.log("Iago has no moves! Your turn")
-            PLAYER *= -1;
-            availablePlays = getAvailablePlays(gameboard, PLAYER);
+            //PLAYER *= -1;
+            availablePlays = getAvailablePlays(gameboard, p*-1);
             YOURTURN = true;
             return;
         }
-        GAMEHISTORY.push({'id':bestMove, 'player':PLAYER});
+        GAMEHISTORY.push({'id':bestMove, 'player':p});
         setTimeout(function(){
-            executeMove(gameboard, bestMove, PLAYER);
-            availablePlays = getAvailablePlays(gameboard, PLAYER);
+            executeMove(gameboard, bestMove, p);
+            availablePlays = getAvailablePlays(gameboard, p*-1);
             checkGameOver(gameboard);
-	    if(availablePlays.length == 0 && !gameover){
-	        IagoPlays(PLAYER *= -1)	
-	    }
-        YOURTURN = true;
+    	    if(availablePlays.length == 0 && !gameover && p == PLAYER2){
+    	        IagoPlays(p)	
+    	    }
+            YOURTURN = true;
         }, 1000);
     }
+
+
+    function miniMax(cMove, cGB, cPlayer, cDepth, fDepth) {     
+    // definitions:  
+    // cMove = current Move, cGB = current gameboard, cPlayer = current PLAYER
+    // cDepth = current depth, fDepth = final depth
+    // at level 1 - passes in the actual gameboard
+    // passes move - board not updated
+    //var cFlips = [];
+    //console.log(cMove);
+
+    var cFlips = getFlips(cGB, cMove, cPlayer);
+
+    if (cDepth == fDepth) {
+        return cFlips.length;
+    } else {
+        console.log("going deeper..." + cDepth)
+        cDepth++;
+        var nGB = cGB.slice();
+        nGB = virtualMove(nGB, cMove, cPlayer);
+        var nMoves = getAvailablePlays(nGB, cPlayer);
+        var nPlayer = cPlayer * -1;
+        var bestSum = 0;
+        for (var m in nMoves) {
+            //cFlips = getFlips(cGB, m, cPlayer);
+            cSum = cFlips.length - miniMax(m, nGB, nPlayer, cDepth, fDepth);
+            if (cSum > bestSum) {
+                bestSum = cSum;
+            }
+        }
+        return bestSum;
+        }
+    }
+
 
     //iterates through the board counting each PLAYERs pieces
     function getGameScore(gameboard){
@@ -256,7 +300,7 @@ function initializeGame(){
         return flips;
     }
 
-    //broken
+    //replays a game given a move, player, and the rest of the list of moves
     function replayMove(id, player, moves){
         counter++;
         console.log("replaying..." + counter + "moves length: " + moves.length)
@@ -271,10 +315,6 @@ function initializeGame(){
         setTimeout(function() {replayMove(moves[counter].id, moves[counter].player, moves);}, 1000);
     }
 
-    
-    
-
-   
 
     function virtualMove(gb, id, p) {
         if (!gb[id]){
@@ -286,37 +326,6 @@ function initializeGame(){
             }
         }
         return gb;
-    }
-    
-    
-    function miniMax(cMove, cGB, cPlayer, cDepth, fDepth) {     
-    // definitions:  
-    // cMove = current Move, cGB = current gameboard, cPlayer = current PLAYER
-    // cDepth = current depth, fDepth = final depth
-    // at level 1 - passes in the actual gameboard
-    // passes move - board not updated
-    //var cFlips = [];
-    //console.log(cMove);
-
-    var cFlips = getFlips(cGB, cMove, cPlayer);
-    
-    if (cDepth == fDepth) {
-        return cFlips.length;
-    } else {
-        cDepth++;
-        var nGB = cGB.slice();
-        nGB = virtualMove(nGB, cMove, cPlayer);
-        var nMoves = getAvailablePlays(nGB, cPlayer);
-        var nPlayer = cPlayer * -1;
-        var bestSum = 0;
-        for (var m in nMoves) {
-            cSum = cFlips.length - miniMax(m, nGB, nPlayer, cDepth, fDepth);
-            if (cSum > bestSum) {
-                bestSum = cSum;
-            }
-        }
-        return bestSum;
-        }
     }
 
 
@@ -353,6 +362,25 @@ function initializeGame(){
         });
     });
 
+    $('#AskIago').bind('click', function(event){
+        if (YOURTURN){
+            IagoPlays(PLAYER1);
+            uGB = gameboard.slice();
+            YOURTURN = false;
+            setTimeout(function(){IagoPlays(PLAYER2)}, 1000);
+        }
+    });
+
+    $('#Undo').bind('click', function(event){
+        while(GAMEHISTORY.pop().player !== 1){}; 
+        console.log(GAMEHISTORY)
+        console.log(uGB)
+        gameboard = uGB.slice();
+        showBoard(gameboard);
+        availablePlays = getAvailablePlays(gameboard, PLAYER1);
+        YOURTURN = true;
+    });
+
     var displayP1Score = $("#player1Score");
     var displayP2Score = $("#player2Score");
     var displayP1Wins = $("#player1Wins");
@@ -379,6 +407,7 @@ function initializeGame(){
     var GAMEHISTORY;
     var gameboard =  [];
     var board = [];
+    uGB = [];
     setUpBoard();
 
     var loadgame = $('#loadgame').val();

@@ -2,7 +2,7 @@
 /*
  * GET home page.
  */
-var database = require('db');
+var database = require('../db');
 db = database.db('ajoyal');
 
 exports.index = function(req, res){
@@ -60,6 +60,7 @@ exports.savegame = function(req, res){
 					console.log(err)
 				} else {
 					console.log("Game saved successfully")
+					res.send({data: "success"})
 				}
 		});
 	} else {
