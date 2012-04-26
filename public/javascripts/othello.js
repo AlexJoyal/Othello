@@ -72,7 +72,7 @@ function initializeGame(){
         } else if (p1Score == 0 || p2Score == 0){
             gameover = true;
             GameOver();
-        } else  if (p1Plays.length == 0 || p2Plays.length == 0){
+        } else  if (p1Plays.length == 0 && p2Plays.length == 0){
             gameover = true;
             GameOver();
         }
@@ -328,6 +328,7 @@ function initializeGame(){
 	    YOURTURN = true;
         GAMEHISTORY = [];
         gameover = false;
+	$("#notify").html("");
         availablePlays = getAvailablePlays(gameboard, PLAYER);
     });
 
