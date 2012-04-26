@@ -1,4 +1,4 @@
-var pg = require('pg');
+var pg = require('pg').native;
 
 // Configuration.
 var host = 'db-edlab.cs.umass.edu';
@@ -7,10 +7,14 @@ var port = 7391;
 // The postgres client.
 var client;
 
-exports.db = function (user, db) {
+exports.db = function (user, pass, db) {
 	if (!db) {
 		db = user;
 	}
+
+    if (pass){
+        user = user + ':' + pass
+    }
 
    	obj = {};
 	obj.conn = 'tcp://' + user + '@' + host + ':' + port + '/' + db;
