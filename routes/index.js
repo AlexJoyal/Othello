@@ -6,7 +6,7 @@ var database = require('db');
 db = database.db('ajoyal');
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Express' })
+  res.redirect('/othello');
 };
 
 exports.playOthello = function(req, res){
@@ -52,7 +52,7 @@ exports.savegame = function(req, res){
 	var data = req.body;
 	var uid = req.session.user;
 	var game = data.game;
-	console.log(game);
+	//console.log(game);
 	if (uid){
 		db.addGame(uid, game, 
 			function(err, result){
@@ -130,15 +130,16 @@ exports.login = function(req, res) {
 	//redirect to /create if user is undefined
 	db.getUser(user, function(err, result){
 			if (err){
-			    res.render('login', {title: 'User Login', error: "Invalid username or password"});
+			    res.render('login', {title: 'User Login', user: false,  error: "Invalid username or password"});
 			} else if (result.rows != ""){
 					req.session.user = result.rows[0].uid;
 					res.redirect('/home');
 					return;
+			} else {
+				res.render('login', {title: 'User Login', user: false, error: "Invalid username or password"});
 			}
 
 	});
-	//res.render('login', {title: 'User Login', error: "Invalid username or password"});
 };
 
 exports.logout = function(req, res) {
