@@ -1,7 +1,7 @@
 body {
 	font-family: sans-serif, "MS Trebuchet", Helvetica;
 	font-size: 15px;
-	width: 600px;
+	width: 750px;
     margin-right: auto;
     margin-left: auto;
     padding: 10px;
@@ -11,9 +11,8 @@ div#board  {
 	float: left;
 	width: 500px;
 }
-div#settings {
-	float: left;
-
+td#settings {
+	width: 200px;
 }
 
 table#gameboard {

@@ -1,7 +1,3 @@
-
-//check for game over conditions
-
-
 //initalize game and board
 function initializeGame(){
 
@@ -155,9 +151,15 @@ function initializeGame(){
         //console.log(nMoves)
         var bestMove = -1;
         var bestSum = -100;
+        var cFLips;
         for (var m in nMoves) {
-            cSum = miniMax(nMoves[m], gameboard, p, 1, LEVEL);
-            //console.log("cSum: " + cSum + " bestSum: " + bestSum)
+            console.log('cMove: %d', nMoves[m])
+
+            cSum = miniMax(nMoves[m], gameboard, p, 1, LEVEL, bestSum);
+            if (nMoves[m] == 11 || nMoves[m] == 18 || nMoves[m] == 81 || nMoves[m] == 88){
+                cSum += 10;
+            }
+            console.log("cSum: " + cSum + " bestSum: " + bestSum)
             if (cSum > bestSum) {
                 bestSum = cSum;
                 bestMove = nMoves[m];
@@ -186,7 +188,7 @@ function initializeGame(){
     }
 
 
-    function miniMax(cMove, cGB, cPlayer, cDepth, fDepth) {     
+    function miniMax(cMove, cGB, cPlayer, cDepth, fDepth, maxmin) {     
     // definitions:  
     // cMove = current Move, cGB = current gameboard, cPlayer = current PLAYER
     // cDepth = current depth, fDepth = final depth
@@ -198,22 +200,34 @@ function initializeGame(){
     var cFlips = getFlips(cGB, cMove, cPlayer);
 
     if (cDepth == fDepth) {
+        //console.log(cMove + " " + cGB + " " + cPlayer);
+        //console.log("move %d returning %d flips", cMove, cFlips.length)
         return cFlips.length;
     } else {
-        //console.log("going deeper..." + cDepth)
+        //console.log("going deeper...%d, player: %d",cDepth, cPlayer)
         cDepth++;
         var nGB = cGB.slice();
         nGB = virtualMove(nGB, cMove, cPlayer);
-        var nMoves = getAvailablePlays(nGB, cPlayer);
-        var nPlayer = cPlayer * -1;
+        var nMoves = getAvailablePlays(nGB, cPlayer*-1);
         var bestSum = 0;
+        var cSum = 0;
         for (var m in nMoves) {
-            //cFlips = getFlips(cGB, m, cPlayer);
-            cSum = cFlips.length - miniMax(m, nGB, nPlayer, cDepth, fDepth);
+            //cFlips = getFlips(nGB, nMoves[m], cPlayer*-1);
+            cSum = cFlips.length - miniMax(nMoves[m], nGB, cPlayer*-1, cDepth, fDepth, bestSum);
+            if (nMoves[m] == 11 || nMoves[m] == 18 || nMoves[m] == 81 || nMoves[m] == 88){
+                cSum += 10;
+            }
+            //console.log('move %d, cFlipsSize: %d, cSum: %d depth: %d', nMoves[m], cFlips.length, cSum, cDepth);
             if (cSum > bestSum) {
                 bestSum = cSum;
+                cSum = 0;
+            } else if(bestSum < maxmin){
+                console.log("AB")
+                break;
             }
         }
+        console.log('bestSum: %d, cDepth: %d', bestSum, cDepth);
+
         return bestSum;
         }
     }
