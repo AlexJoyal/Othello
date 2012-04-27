@@ -7,30 +7,34 @@ body {
     padding: 10px;
 }
 
-h1 {
-	text-align: center;
-	margin: 20px;
-}
-
 div#board  {
 	float: left;
-	text-align: center;
 	width: 500px;
 }
 div#settings {
 	float: left;
 
 }
-p {
-	  font: 12px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
-    text-align: justify;
+
+table#gameboard {
+	border:groove 5px #424242;
+	border-radius: 5px;
+	padding: 3px;
+	background-color: #D0D0D0;
 }
 
-div table td {
-   background-color: #cbcbcb;
-   background-repeat: no-repeat;
-   height: 50px;
-   width: 50px;
+table#gameboard td{
+	border-radius: 2px;
+	padding: 1px;
+	background-color: #cbcbcb;
+   	background-repeat: no-repeat;
+    height: 50px;
+    width: 50px;
+}
+
+p {
+	font: 12px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+    text-align: justify;
 }
 
 .p0{
@@ -51,5 +55,25 @@ div table td {
 }
 
 label {
-	padding: 20px;
+	padding: 15px;
+}
+
+table#gamehistory {
+	border:groove 5px #424242;
+	border-radius: 5px;
+	padding: 5px;
+	background-color: #D0D0D0;
+	text-align: center;
+	position: relative;
+
+}
+table#gamehistory td {
+	padding: 5px;
+}
+table#gamehistory tr:nth-child(2n+1) {
+  background-color: #909090;
+}
+
+.error {
+	color: #ea1e1e
 }

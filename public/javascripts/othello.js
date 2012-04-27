@@ -114,20 +114,10 @@ function initializeGame(){
         } 
         YOURTURN = false; //no longer your turn
 
-        //if we just loaded a game, get the available moves
-        if (loadgame){
-            availablePlays = getAvailablePlays(gameboard, PLAYER);
-            loadgame = "";
-        }
-
-        
-
         if (contains(availablePlays, id)){
             GAMEHISTORY.push({'id':id, 'player':PLAYER1});
             uGB = gameboard.slice();
             executeMove(gameboard, id, PLAYER1);
-            
-
             IagoPlays(PLAYER2);
         } else {
             YOURTURN = true;
@@ -179,6 +169,7 @@ function initializeGame(){
             console.log("Iago has no moves! Your turn")
             //PLAYER *= -1;
             availablePlays = getAvailablePlays(gameboard, p*-1);
+            checkGameOver(gameboard);
             YOURTURN = true;
             return;
         }
@@ -209,7 +200,7 @@ function initializeGame(){
     if (cDepth == fDepth) {
         return cFlips.length;
     } else {
-        console.log("going deeper..." + cDepth)
+        //console.log("going deeper..." + cDepth)
         cDepth++;
         var nGB = cGB.slice();
         nGB = virtualMove(nGB, cMove, cPlayer);
@@ -337,7 +328,8 @@ function initializeGame(){
 	    YOURTURN = true;
         GAMEHISTORY = [];
         gameover = false;
-	$("#notify").html("");
+        gid = -1;
+        $("#notify").html("");
         availablePlays = getAvailablePlays(gameboard, PLAYER);
     });
 
@@ -355,7 +347,12 @@ function initializeGame(){
         var req = $.ajax({
             type: 'POST',
             url : '/savegame',
-            data: { 'uid': uid, 'game' : JSON.stringify(GAMEHISTORY)}
+            data: { 'gid': gid, 
+                    'game' : JSON.stringify(GAMEHISTORY),
+                    'gameboard': JSON.stringify(gameboard),
+                    'p1score' : p1Score,
+                    'p2score' : p2Score}
+
         });
         req.done(function (data) {
             console.log("game saved");
@@ -373,12 +370,14 @@ function initializeGame(){
 
     $('#Undo').bind('click', function(event){
         while(GAMEHISTORY.pop().player !== 1){}; 
-        console.log(GAMEHISTORY)
-        console.log(uGB)
+        //console.log(GAMEHISTORY)
+        //console.log(uGB)
         gameboard = uGB.slice();
         showBoard(gameboard);
+        $("#notify").html("");
         availablePlays = getAvailablePlays(gameboard, PLAYER1);
         YOURTURN = true;
+        gameover = false;
     });
 
     var displayP1Score = $("#player1Score");
@@ -401,7 +400,7 @@ function initializeGame(){
     displayP1Wins.html(p1Wins);
     displayP2Wins.html(p2Wins);
 
-    var uid = 0;
+    var gid = -1;
     var gameover = false;
     var PLAYER = PLAYER1;
     var GAMEHISTORY;
@@ -411,11 +410,17 @@ function initializeGame(){
     setUpBoard();
 
     var loadgame = $('#loadgame').val();
+    var loadgb = $('#gb').val();
     if (loadgame){
         GAMEHISTORY = JSON.parse(loadgame);
-        console.log("GAMEHISTORY length: " + GAMEHISTORY.length )
-        counter = 0;
-        replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY)
+        gameboard = JSON.parse(loadgb);
+        //console.log(gameboard);
+        gid = parseInt($('#gid').val(), 10);
+        showBoard(gameboard);
+        availablePlays = getAvailablePlays(gameboard, PLAYER1);
+        //console.log("GAMEHISTORY length: " + GAMEHISTORY.length )
+        //counter = 0;
+        //replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY)
     } else {
 	   GAMEHISTORY = [];
     }

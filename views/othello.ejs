@@ -1,12 +1,14 @@
 
 <% if (game) { %>
 	<input type="hidden" id="loadgame" value=<%= game%> />
+	<input type="hidden" id="gb" value=<%= gameboard%> />
+	<input type="hidden" id="gid" value=<%= gid%> />
 <%} %>
 
 <div id="board">
 	<h1 id="heading">Othello</h1>
 	<h2 id="notify"></h2>
-	<table border="1">
+	<table id="gameboard" border="1">
 	<tr>
 	   <td id="11"></td>
 	   <td id="12"></td>

@@ -23,7 +23,8 @@ exports.db = function (user, pass, db) {
     obj.getGame = getGame;
     obj.addGame = addGame;
 	obj.getUserByEmail = getUserByEmail;
-	obj.getGames = getGames
+	obj.getGames = getGames;
+    obj.updateGame = updateGame;
 	return obj;
 }
 
@@ -78,14 +79,24 @@ function getGame (uid, gameID, cb) {
     });
 };
 
-function addGame (uid, game, cb){
+function addGame (uid, game, gameboard, p1score, p2score, cb){
     var that = this;
         pg.connect(that.conn, function (err, client) {
-        var sql = 'insert into games values(default, $1, $2, now());';
-        client.query(sql, [uid, game],
+        var sql = 'insert into games values(default, $1, $2, $3, $4, $5, now());';
+        client.query(sql, [uid, game, gameboard, p1score, p2score],
                     function (err, result) {
                         cb(err, result);
                     });
         });
 }
 
+function updateGame(gid, game, gameboard, p1score, p2score, cb){
+    var that = this;
+        pg.connect(that.conn, function (err, client) {
+        var sql = 'update games set gamehistory=$1, gameboard=$2, p1score=$3, p2score=$4 where gid=$5;';
+        client.query(sql, [game, gameboard, p1score, p2score, gid],
+                    function (err, result) {
+                        cb(err, result);
+                    });
+        });
+}

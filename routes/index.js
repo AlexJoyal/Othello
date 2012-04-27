@@ -51,10 +51,15 @@ exports.createuser = function(req, res){
 exports.savegame = function(req, res){
 	var data = req.body;
 	var uid = req.session.user;
+	var gid = data.gid;
 	var game = data.game;
+	var gameboard = data.gameboard;
+	var p1score = data.p1score;
+	var p2score = data.p2score;
+	//console.log(gameboard)
 	//console.log(game);
-	if (uid){
-		db.addGame(uid, game, 
+	if (uid && gid == -1){
+		db.addGame(uid, game, gameboard, p1score, p2score, 
 			function(err, result){
 				if(err){
 					console.log(err)
@@ -63,6 +68,16 @@ exports.savegame = function(req, res){
 					res.send({data: "success"})
 				}
 		});
+	} else if (gid !== -1){
+		db.updateGame(gid, game, gameboard, p1score, p2score, 
+			function(err, result){
+				if (err){
+					console.log(err);
+				} else {
+					console.log("Game %d updated successfully", gid);
+					res.send({data: "success"})
+				}
+			});
 	} else {
 		console.log("Game not saved, no user logged in")
 	}
@@ -82,7 +97,9 @@ exports.loadgame = function(req, res){
 					res.render('othello', {
 							title: "Othello",
 							user: true,
-							game: result.rows[0].game
+							gid: gid,
+							game: result.rows[0].gamehistory,
+							gameboard: result.rows[0].gameboard
 					});
 				} else {
 					res.render('othello', {
@@ -107,6 +124,7 @@ exports.gameHistory = function(req, res){
 					console.log(err);
 				} else {
 					games = result.rows;
+					//console.log(games);
 					res.render('home', {title: "Home",
 							games: games,
 							user: true
