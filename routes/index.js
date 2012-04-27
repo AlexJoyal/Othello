@@ -2,7 +2,7 @@
 /*
  * GET home page.
  */
-var database = require('../db');
+var database = require('db');
 db = database.db('ajoyal');
 
 exports.index = function(req, res){
