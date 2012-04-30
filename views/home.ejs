@@ -1,7 +1,16 @@
 <h1>Game History - Saved Games</h1>
 <table id="gamehistory">
-	<tr><td>GameID</td><td>Date</td><td>Player1 Score</td><td>Iago Score</td></tr>
+	<tr>
+		<td>GameID</td>
+		<td>Date</td>
+		<td>Player1 Score</td>
+		<td>Iago Score</td>
+	</tr>
 	<% for (var i in games) {%>
-   		<tr><td><a href=/loadgame/<%= games[i].gid %>><%= games[i].gid %></td><td><%= games[i].tstamp %></td><td><%= games[i].p1score %></td><td><%= games[i].p2score %></td></tr>
+   		<tr><td><a href=/loadgame/<%= games[i].gid %>><%= games[i].gid %></td>
+   			<td><%= games[i].tstamp %></td>
+   			<td><%= games[i].p1score %></td>
+   			<td><%= games[i].p2score %></td>
+   		</tr>
 	<%} %>
 </table>

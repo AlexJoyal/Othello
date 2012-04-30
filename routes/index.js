@@ -1,7 +1,4 @@
 
-/*
- * GET home page.
- */
 var database = require('db');
 db = database.db('ajoyal');
 
@@ -25,39 +22,40 @@ exports.createuser = function(req, res){
     var password = req.body.password;
     var email = req.body.email;
 
-
-    if (!checkUserExists(email)){
-        var user = {
+    db.getUserByEmail(email, function(err, result){
+		if(err){
+			console.log(err);
+		} else {
+			if (result.rows.length == 0){
+				var user = {
                 'name': name,
                 'pass': password,
                 'email': email,
-       	};
-        db.addUser(user, function(err, result){
+       			};
+       			db.addUser(user, function(err, result){
        				if (err){
        					console.log(err);
     			   	} else {
         				console.log("User %s added", name);
      				}
-        });
-    } else {
-        res.render('newuser', {title:"Register", error: "Sorry, user name already in use."})
-    }
-    
-    res.redirect('/login');
-
-
+       			});
+        		res.redirect('/login');
+			} else {
+				res.render('newuser', {title:"Register", user: false, error: "Sorry, user email already registered."})
+			}
+		}
+	});
 }
 
 exports.savegame = function(req, res){
 	var data = req.body;
 	var uid = req.session.user;
-	var gid = data.gid;
+	var gid = parseInt(data.gid, 10);
 	var game = data.game;
 	var gameboard = data.gameboard;
 	var p1score = data.p1score;
 	var p2score = data.p2score;
-	//console.log(gameboard)
-	//console.log(game);
+
 	if (uid && gid == -1){
 		db.addGame(uid, game, gameboard, p1score, p2score, 
 			function(err, result){
@@ -68,7 +66,7 @@ exports.savegame = function(req, res){
 					res.send({data: "success"})
 				}
 		});
-	} else if (gid !== -1){
+	} else if (gid != -1){
 		db.updateGame(gid, game, gameboard, p1score, p2score, 
 			function(err, result){
 				if (err){
@@ -162,17 +160,6 @@ exports.login = function(req, res) {
 };
 
 exports.logout = function(req, res) {
-    // TODO: user logout
     req.session.destroy();
     res.redirect('/login');
 };
-
-function checkUserExists(email){
-	db.getUserByEmail(email, function(err, result){
-		if(err){
-			return false;
-		} else {
-			return true;
-		}
-	})
-}

@@ -13,9 +13,11 @@ CREATE SEQUENCE game_id_seq;
 CREATE TABLE games (
   gid int not null default nextval('game_id_seq'),
   uid int,
-  game varchar(1000),
+  gamehistory varchar(1560),
+  gameboard varchar(500),
+  p1score int,
+  p2score int,
   tstamp date,
   primary key (gid),
   foreign key (uid) references users (uid)
 );
-

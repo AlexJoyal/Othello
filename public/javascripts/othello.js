@@ -1,20 +1,24 @@
 //initalize game and board
 function initializeGame(){
 
-    //sets boards up for a new game
+    /*
+    sets boards up for a new game
+    binding board locations to table data elements from the DOM
+    classNames are used to switch between pieces 'p1' for black, 'p-1' for white
+    initially all pieces are blank except for the middle 4.
+    using a 10x10 board makes identifying available moves and resulting flips easier, however makes
+    for some tricky intialization and manipulation (not really)
+    */
     function setUpBoard(){
         var e;
         for (var j = 11; j < 89; j++) {
-            if ( (j%10 != 9) && (j%10 != 0) ) { 
-                gameboard[j] = 0;
-                board[j] = document.getElementById(j.toString());
+            if ( (j%10 != 9) && (j%10 != 0) ) { //iterate only over valid board locations
+                gameboard[j] = 0; //gameboard used for internal logic, strict -1s, 0s, 1s for white, empty, and black pieces
+                board[j] = document.getElementById(j.toString()); //board used for display purposes and interacting with the user
                 board[j].className = "";
                 board[j].onclick = function() {
                     gameMove(this.id);
                 }
-                
-                //TODO implement onmouseover - shows results of click
-				//gameboard[j].onmouseover = showMove();
             }
         }
 
@@ -29,12 +33,11 @@ function initializeGame(){
     //takes the gameboard, and updates board to display changes to the user
     function showBoard(gameboard){
         for (var j = 11; j < 89; j++) {
-            if ( (j%10 != 9) && (j%10 != 0) ) { 
+            if ( (j%10 != 9) && (j%10 != 0) ) { //iterate only over valid board locations
                 if (gameboard[j] == 0){
                     board[j].className = "";
                 } else if (gameboard[j] == 1) {
                     board[j].className = "p1";
-                    //console.log(j);
                 } else if (gameboard[j] == -1){
                     board[j].className = "p-1";
                 }
@@ -46,7 +49,6 @@ function initializeGame(){
     function checkGameOver(gameboard){
 
         //end state test - true when board is full
-        console.log("checking game over...")
         function allTilesFilled() {
             for (var i = 11; i <= 88; i++) {
                 if ( (i%10 != 9) && (i%10 != 0) ) { 
@@ -102,12 +104,14 @@ function initializeGame(){
         return false;
     }
     
+    //function that is called when the user clicks a gameboard location
     function gameMove(id){
 
         //do nothing if gameover
         if (gameover || !YOURTURN){
             return;
         } 
+        $("#notify").html("");
         YOURTURN = false; //no longer your turn
 
         if (contains(availablePlays, id)){
@@ -118,27 +122,21 @@ function initializeGame(){
         } else {
             YOURTURN = true;
             return;
-        }
-	
-        //console.log("User played")
-        
-        //checkGameOver(gameboard);
+        }        
     }
 
-
-    // it verifies that the id of the move is a valid board location
+    //applies the specified move to the given gameboard assuming it is played by player 'p'
+    //only works when given a valid move! is dependent upon the calling function filtering out invalid moves!
     function executeMove(gameboard, id, p){
 
         if (gameboard[id] == 0){
-            //GAMEHISTORY.push({'id': id, player: p})
             gameboard[id]= p;
             var flips = getFlips(gameboard, id, p);
-            for (var a in flips){
+            for (var a in flips){ //flip all inbetween pieces
                 gameboard[flips[a]] = p;
-                //console.log(PLAYER);
             }
         }
-        //PLAYER *= -1;
+        //update the display with latest gameboard configuration
         getGameScore(gameboard);
         showBoard(gameboard);
     }
@@ -148,28 +146,25 @@ function initializeGame(){
         LEVEL = parseInt(LEVEL.val(), 10);
       
         var nMoves = getAvailablePlays(gameboard, p);
-        //console.log(nMoves)
         var bestMove = -1;
         var bestSum = -100;
         var cFLips;
         for (var m in nMoves) {
-            console.log('cMove: %d', nMoves[m])
-
-            cSum = miniMax(nMoves[m], gameboard, p, 1, LEVEL, bestSum);
+            var cSum = 0;
+            cFlips = getFlips(gameboard, nMoves[m], p);
+            cSum = cFlips.length - miniMax(nMoves[m], gameboard, p, 1, LEVEL);
+            //add simple heuristic for corners
             if (nMoves[m] == 11 || nMoves[m] == 18 || nMoves[m] == 81 || nMoves[m] == 88){
                 cSum += 10;
             }
-            console.log("cSum: " + cSum + " bestSum: " + bestSum)
             if (cSum > bestSum) {
                 bestSum = cSum;
                 bestMove = nMoves[m];
-                //console.log("BestMove: " + bestMove)
             }
         }
 
         if (bestMove === -1){
-            console.log("Iago has no moves! Your turn")
-            //PLAYER *= -1;
+            $("#notify").html("Iago has no moves! Your turn");
             availablePlays = getAvailablePlays(gameboard, p*-1);
             checkGameOver(gameboard);
             YOURTURN = true;
@@ -188,7 +183,7 @@ function initializeGame(){
     }
 
 
-    function miniMax(cMove, cGB, cPlayer, cDepth, fDepth, maxmin) {     
+    function miniMax(cMove, cGB, cPlayer, cDepth, fDepth) {     
     // definitions:  
     // cMove = current Move, cGB = current gameboard, cPlayer = current PLAYER
     // cDepth = current depth, fDepth = final depth
@@ -198,42 +193,50 @@ function initializeGame(){
     //console.log(cMove);
 
     var cFlips = getFlips(cGB, cMove, cPlayer);
-
     if (cDepth == fDepth) {
-        //console.log(cMove + " " + cGB + " " + cPlayer);
-        //console.log("move %d returning %d flips", cMove, cFlips.length)
         return cFlips.length;
     } else {
-        //console.log("going deeper...%d, player: %d",cDepth, cPlayer)
         cDepth++;
         var nGB = cGB.slice();
         nGB = virtualMove(nGB, cMove, cPlayer);
         var nMoves = getAvailablePlays(nGB, cPlayer*-1);
-        var bestSum = 0;
-        var cSum = 0;
-        for (var m in nMoves) {
-            //cFlips = getFlips(nGB, nMoves[m], cPlayer*-1);
-            cSum = cFlips.length - miniMax(nMoves[m], nGB, cPlayer*-1, cDepth, fDepth, bestSum);
-            if (nMoves[m] == 11 || nMoves[m] == 18 || nMoves[m] == 81 || nMoves[m] == 88){
-                cSum += 10;
-            }
-            //console.log('move %d, cFlipsSize: %d, cSum: %d depth: %d', nMoves[m], cFlips.length, cSum, cDepth);
-            if (cSum > bestSum) {
-                bestSum = cSum;
-                cSum = 0;
-            } else if(bestSum < maxmin){
-                console.log("AB")
-                break;
-            }
+        if (nMoves == ""){
+            return cFlips.length;
         }
-        console.log('bestSum: %d, cDepth: %d', bestSum, cDepth);
+        var bestSum;
+        for (var m in nMoves) {
+                var cSum = 0;
+                cSum = cFlips.length - miniMax(nMoves[m], nGB, cPlayer*-1, cDepth, fDepth);
+                
+                //add simple heuristic for corners
+                if (nMoves[m] == 11 || nMoves[m] == 18 || nMoves[m] == 81 || nMoves[m] == 88){
+                    cSum += 10;
+                }
+
+                if (cSum > bestSum || !bestSum) {
+                    bestSum = cSum;
+                }
+        }
 
         return bestSum;
         }
     }
 
+    //virtual move used by minimax to simulate future gameboard configurations
+    //could have used a modified executeMove, but this is easy enough
+    function virtualMove(gb, id, p) {
+        if (!gb[id]){
+            gb[id]= p;
+            var flips = getFlips(gb, id, p);
+            for (var a in flips){
+                gb[flips[a]] = p;
+            }
+        }
+        return gb;
+    }
 
     //iterates through the board counting each PLAYERs pieces
+    //updates the display with the current score
     function getGameScore(gameboard){
         p1Score = 0;
         p2Score = 0;
@@ -265,9 +268,11 @@ function initializeGame(){
                         while (gb[ (i + (n*locals[j])) ] == (-1*player)) {   //next square in line is opp color
                             //console.log("first while");
                             if (gb[ ( i + ( (n+1)*locals[j]) ) ] == player) { //next next square in is my color - viable move
-                                moves.push(i); //store it
-                                // next line shows move options
-                                //gameboard[i].className = "pMove";
+                                if(!contains(moves, i)){
+                                    moves.push(i); //store it
+                                    // next line shows move options
+                                    //gameboard[i].className = "pMove";
+                                }
                                 break;
                             }
                             n++;
@@ -311,40 +316,29 @@ function initializeGame(){
         console.log("replaying..." + counter + "moves length: " + moves.length)
         if (counter >= moves.length){
             executeMove(gameboard, id, player);
-            console.log("finished")
+            console.log("finished replay")
             return;
         } else {
             executeMove(gameboard, id, player);
         }
-        //console.log(counter);
         setTimeout(function() {replayMove(moves[counter].id, moves[counter].player, moves);}, 1000);
     }
 
 
-    function virtualMove(gb, id, p) {
-        if (!gb[id]){
-            gb[id]= p;
-            var flips = getFlips(gb, id, p);
-            for (var a in flips){
-                gb[flips[a]] = p;
-                //console.log(PLAYER);
-            }
-        }
-        return gb;
-    }
+    // Bind functions for the button features
 
+    $("#NewGame").bind('click', function(){ 
 
-    $("#NewGame").bind('click', function(){
+        //initialize a new game
         gameboard = [];
         board = new Array();
         setUpBoard(); 
-        PLAYER = PLAYER1;
-	    YOURTURN = true;
         GAMEHISTORY = [];
+	    YOURTURN = true;
         gameover = false;
-        gid = -1;
-        $("#notify").html("");
-        availablePlays = getAvailablePlays(gameboard, PLAYER);
+        gid = -1; // its a new game so we dont want to overwrite the previously loaded game.
+        $("#notify").html(""); //erase any notifications
+        availablePlays = getAvailablePlays(gameboard, PLAYER1);
     });
 
     $("#PreviousGame").bind('click', function(){
@@ -357,11 +351,11 @@ function initializeGame(){
     });
 
     $('#SaveGame').bind('click', function(event) {
-        //implement me
+        //send an ajax request to the server to save the current game including gamehistory, gameboard, and score. 
         var req = $.ajax({
             type: 'POST',
             url : '/savegame',
-            data: { 'gid': gid, 
+            data: { 'gid': gid, //if we have loaded a game we want to overwrite the previously saved version.
                     'game' : JSON.stringify(GAMEHISTORY),
                     'gameboard': JSON.stringify(gameboard),
                     'p1score' : p1Score,
@@ -374,26 +368,30 @@ function initializeGame(){
     });
 
     $('#AskIago').bind('click', function(event){
+        //if its our turn we can ask Iago for help, run minimax on our available plays and play the best one
+        //use whatever depth is being used for iago.
         if (YOURTURN){
-            IagoPlays(PLAYER1);
-            uGB = gameboard.slice();
-            YOURTURN = false;
-            setTimeout(function(){IagoPlays(PLAYER2)}, 1000);
+            uGB = gameboard.slice(); // make a copy of gameboard so we can undo this move
+            IagoPlays(PLAYER1); //call minimax for player1
+            YOURTURN = false; //no longer player1s turn
+            setTimeout(function(){IagoPlays(PLAYER2)}, 1000); //let iago play after 1s
         }
     });
 
     $('#Undo').bind('click', function(event){
-        while(GAMEHISTORY.pop().player !== 1){}; 
-        //console.log(GAMEHISTORY)
-        //console.log(uGB)
-        gameboard = uGB.slice();
-        showBoard(gameboard);
-        $("#notify").html("");
-        availablePlays = getAvailablePlays(gameboard, PLAYER1);
-        YOURTURN = true;
-        gameover = false;
-    });
+        while(GAMEHISTORY.pop().player !== 1){}; //pop all moves by iago off the gamehistory, including player1s last move
 
+        gameboard = uGB.slice(); //set gameboard to our copy from before player 1s last move.
+        showBoard(gameboard); //display the new gameboard
+        $("#notify").html(""); //clear notification display in case something had been displayed
+        
+        //repopulate player1s available moves and make it their turn
+        availablePlays = getAvailablePlays(gameboard, PLAYER1); 
+        YOURTURN = true;
+        gameover = false; //in case the move that was undone led to a gameover
+    });
+    
+    //initialize various DOM hooks and necessary 'globals'
     var displayP1Score = $("#player1Score");
     var displayP2Score = $("#player2Score");
     var displayP1Wins = $("#player1Wins");
@@ -416,34 +414,35 @@ function initializeGame(){
 
     var gid = -1;
     var gameover = false;
-    var PLAYER = PLAYER1;
     var GAMEHISTORY;
-    var gameboard =  [];
-    var board = [];
-    uGB = [];
+    var gameboard =  []; //gameboard used for computation purposes
+    var board = []; //board containing dom element hooks for updating the gameboard
+    uGB = []; //undo gameboard, used for the undo/go back feature
     setUpBoard();
 
-    var loadgame = $('#loadgame').val();
-    var loadgb = $('#gb').val();
-    if (loadgame){
-        GAMEHISTORY = JSON.parse(loadgame);
-        gameboard = JSON.parse(loadgb);
-        //console.log(gameboard);
-        gid = parseInt($('#gid').val(), 10);
+    //check if we are loading a game
+    var loadgame = $('#loadgame').val(); 
+    var loadgb = $('#gb').val(); 
+    
+    //yes its ugly but it works
+    if (loadgame && loadgb){
+        GAMEHISTORY = JSON.parse(loadgame); //parse the loaded gamehistory
+        gameboard = JSON.parse(loadgb); //parse the loaded gameboard
+        gid = parseInt($('#gid').val(), 10); //retrieve the gid for the loaded game so we can overwrite it later if need be
+        
+        //show the loaded board
         showBoard(gameboard);
-        availablePlays = getAvailablePlays(gameboard, PLAYER1);
-        //console.log("GAMEHISTORY length: " + GAMEHISTORY.length )
-        //counter = 0;
-        //replayMove(GAMEHISTORY[0].id, GAMEHISTORY[0].player, GAMEHISTORY)
     } else {
-	   GAMEHISTORY = [];
+	   GAMEHISTORY = []; //set gamehistory to empty if we arent loading a game
     }
 
-    var availablePlays = getAvailablePlays(gameboard, PLAYER);
+    //get player1s available moves and we are ready to roll
+    var availablePlays = getAvailablePlays(gameboard, PLAYER1);
 
 }
 
 
 $(function(){
+    //on window load initialize the game
     initializeGame();
 });
