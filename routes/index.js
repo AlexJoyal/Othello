@@ -136,7 +136,6 @@ exports.gameHistory = function(req, res){
 }
 
 exports.login = function(req, res) {
-    // TODO: user login
   
 	var name = req.body.name;
 	var password = req.body.password;
@@ -144,6 +143,7 @@ exports.login = function(req, res) {
 		'name': name,
 		'pass': password
 	}
+	
 	//redirect to /create if user is undefined
 	db.getUser(user, function(err, result){
 			if (err){
