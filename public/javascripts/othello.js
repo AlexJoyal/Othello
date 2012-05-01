@@ -152,7 +152,11 @@ function initializeGame(){
         for (var m in nMoves) {
             var cSum = 0;
             cFlips = getFlips(gameboard, nMoves[m], p);
-            cSum = cFlips.length - miniMax(nMoves[m], gameboard, p, 1, LEVEL);
+	    if (LEVEL == 1){
+	        cSum = cFlips.length;
+	    } else {
+                cSum = cFlips.length - miniMax(nMoves[m], gameboard, p, 1, LEVEL);
+	    }
             //add simple heuristic for corners
             if (nMoves[m] == 11 || nMoves[m] == 18 || nMoves[m] == 81 || nMoves[m] == 88){
                 cSum += 10;
@@ -187,10 +191,6 @@ function initializeGame(){
     // definitions:  
     // cMove = current Move, cGB = current gameboard, cPlayer = current PLAYER
     // cDepth = current depth, fDepth = final depth
-    // at level 1 - passes in the actual gameboard
-    // passes move - board not updated
-    //var cFlips = [];
-    //console.log(cMove);
 
     var cFlips = getFlips(cGB, cMove, cPlayer);
     if (cDepth == fDepth) {
