@@ -2,7 +2,7 @@ function validateCreateForm() {
     var name = document.forms["createuser"]["name"].value;
     var pass = document.forms["createuser"]["password"].value;
     var email = document.forms["createuser"]["email"].value;
-    if (name == "" || pass == "" || email == ""){
+    if (name == "" || pass == "" || !email ){
         alert("All fields must be filled out");
         return false;
     }
